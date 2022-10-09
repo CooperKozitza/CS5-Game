@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1920910514974186063, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Name
-      value: Tile (1)
+      value: Floor
       objectReference: {fileID: 0}
     - target: {fileID: 3721234003258309265, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Mesh
@@ -249,7 +249,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1920910514974186063, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Name
-      value: Tile (2)
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 3721234003258309265, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Mesh
@@ -374,7 +374,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1920910514974186063, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Name
-      value: Tile
+      value: Empty
+      objectReference: {fileID: 0}
+    - target: {fileID: 3721234003258309265, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_RootOrder
@@ -525,7 +529,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1920910514974186063, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Name
-      value: Tile (3)
+      value: Door
       objectReference: {fileID: 0}
     - target: {fileID: 3721234003258309265, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Mesh
@@ -630,7 +634,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1920910514974186063, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Name
-      value: Tile (4)
+      value: Corner
       objectReference: {fileID: 0}
     - target: {fileID: 3721234003258309265, guid: 9e8a8556ba95a604982b8d9dab32d673, type: 3}
       propertyPath: m_Mesh
