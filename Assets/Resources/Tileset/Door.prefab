@@ -110,38 +110,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add183e0fc45897499517410aa707c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Entropy: []
-  Collapsed: 0
+  probability: 0.5
   walkable: 0
   Top:
-    connectorId: 0
+    connectorId: 105
     rotation: 0
-    flipped: 0
     invariable: 0
     symetrical: 0
   Bottom:
-    connectorId: 0
+    connectorId: 102
     rotation: 0
-    flipped: 0
-    invariable: 0
-    symetrical: 0
+    invariable: 1
+    symetrical: 1
   Left:
-    connectorId: 0
-    rotation: 0
-    flipped: 0
+    connectorId: 105
+    rotation: 1
     invariable: 0
   Right:
-    connectorId: 0
+    connectorId: 102
     rotation: 0
-    flipped: 0
-    invariable: 0
+    invariable: 1
   Front:
-    connectorId: 0
-    rotation: 0
-    flipped: 0
+    connectorId: 108
+    rotation: 3
     invariable: 0
   Back:
-    connectorId: 0
+    connectorId: 108
     rotation: 0
-    flipped: 0
     invariable: 0

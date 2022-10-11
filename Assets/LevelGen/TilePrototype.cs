@@ -11,13 +11,12 @@ namespace Tile
     {
         [Range(0, 1)]
         public float probability = 1.0f;
-        public List<TilePrototype> Entropy = new List<TilePrototype>();
-        public bool collapsed = false;
+        public bool collapsed { get; set; }
 
         [Serializable]
         public class Face
         {
-            public string connectorId;
+            public char connectorId;
             [Range(0, 3), Tooltip("Clockwise")]
             public int rotation = 0;
             public bool invariable = false;
@@ -38,6 +37,12 @@ namespace Tile
         public Face Front;
         public Face Back;
 
+        public string horizontalConnectors { get; set; }
+
+        void Start()
+        {
+            horizontalConnectors = String.Concat(Left.connectorId, Right.connectorId, Front.connectorId, Back.connectorId);
+        }
     }
 }
 
