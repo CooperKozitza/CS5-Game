@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4250920012265124384}
   - component: {fileID: 8609307559170667795}
   m_Layer: 0
-  m_Name: Corner
+  m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1920910514974186063}
-  m_Mesh: {fileID: -5221963080773851136, guid: d249f2b5593dd1e4c9979fdab199bc7d, type: 3}
+  m_Mesh: {fileID: 3402742096233047544, guid: acca769ef8c50704c95bc0b92a17e3b5, type: 3}
 --- !u!65 &4250920012265124384
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -110,9 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add183e0fc45897499517410aa707c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  probability: 0.75
   Entropy: []
-  collapsed: 0
+  Collapsed: 0
   walkable: 0
   Top:
     connectorId: 0
