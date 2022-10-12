@@ -6,7 +6,7 @@ using Tile;
 
 public class LevelGen : MonoBehaviour
 {
-    public static int levelX, levelY;
+    public int levelX, levelY;
 
     // removable
     private List<Object> Existing = new List<Object>();
@@ -16,10 +16,16 @@ public class LevelGen : MonoBehaviour
     private string[,] entropyMap { get; set; }
     private GameObject[,] level { get; set; }
 
-    LevelGen()
+    void Start()
     {
         entropyMap = new string[levelX, levelY];
         level = new GameObject[levelX, levelY];
+        
+        for (int i = 0; i < Tileset.Count; i++)
+        {
+            Tileset[i].SetActive(true);
+        }
+
         foreach (GameObject tile in Tileset)
         {
             connectorSet.Add(tile.GetComponent<TilePrototype>().horizontalConnectors);
@@ -31,6 +37,7 @@ public class LevelGen : MonoBehaviour
 
     public void Generate()
     {
+        if (!UnityEngine.Application.isPlaying) Start();
         // removaable
         // Remove existing tiles in scene previosly generated
         if (this.Existing.Count > 0)
@@ -45,11 +52,14 @@ public class LevelGen : MonoBehaviour
         int randX = Random.Range(0, levelX);
         int randY = Random.Range(0, levelY);
 
-        level[randX, randY] = Instantiate(Tileset[Random.Range(0, Tileset.Count)], new Vector3(randX * 2, 1, randY * 2), new Quaternion());
-        level[randX, randX].gameObject.GetComponent<TilePrototype>().collapsed = true;
+        GameObject seedTile = Instantiate(Tileset[Random.Range(0, Tileset.Count)], new Vector3(randX * 2, 1, randY * 2), new Quaternion());
+        seedTile.SetActive(true);
+        seedTile.gameObject.GetComponent<TilePrototype>().collapsed = true;
+        level[randX, randY] = seedTile;
 
         Distribute(randX, randY);
 
+        // generate the rest of the level
         bool collapsed = false;
         int x = randX, y = randY;
 
@@ -90,6 +100,7 @@ public class LevelGen : MonoBehaviour
     public void Distribute(int x, int y)
     {
         if (entropyMap[x, y] == "----") return;
+        if (x > levelX || y > levelY) return;
 
         // get connectors of collapsed tile
         string collapsedTileConnectors = 
@@ -145,5 +156,7 @@ public class LevelGen : MonoBehaviour
             entropyMap[x, y - 1] = string.Concat("---", collapsedTileConnectors[(int)entropyOffsets.Back].ToString());
         }
         Distribute(x, y - 1);
+
+        Debug.Log("(" + x + ", " + y + "): " + entropyMap[x, y]);
     }
 }

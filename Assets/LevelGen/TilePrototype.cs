@@ -39,9 +39,11 @@ namespace Tile
 
         public string horizontalConnectors { get; set; }
 
-        void Start()
+        void OnEnable()
         {
             horizontalConnectors = String.Concat(Left.connectorId, Right.connectorId, Front.connectorId, Back.connectorId);
+            Debug.Log(String.Concat(Left.connectorId, Right.connectorId, Front.connectorId, Back.connectorId));
+            Debug.Log(horizontalConnectors);
         }
     }
 }
