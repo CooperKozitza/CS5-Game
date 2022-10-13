@@ -18,7 +18,15 @@ public class LevelGen : MonoBehaviour
 
     void Start()
     {
+        connectorSet = new List<string>();
         entropyMap = new string[levelX, levelY];
+        for (int i = 0; i < levelX; i++)
+        {
+            for (int j = 0; j < levelY; j++)
+            {
+                entropyMap[i, j] = "----";
+            }
+        }
         level = new GameObject[levelX, levelY];
         
         for (int i = 0; i < Tileset.Count; i++)
@@ -99,8 +107,13 @@ public class LevelGen : MonoBehaviour
     private enum entropyOffsets { Left = 0, Right = 1, Front = 2, Back = 3 }
     public void Distribute(int x, int y)
     {
-        if (entropyMap[x, y] == "----") return;
-        if (x > levelX || y > levelY) return;
+        for (int i = 0; i < entropyMap[x, y].Length; i++)
+        {
+            if (entropyMap[x, y].ToCharArray()[i] == '-') break;
+            if (i == entropyMap[x, y].Length - 1) return;
+        }
+
+        if (x > levelX || y > levelY || x < 0 || y < 0) return;
 
         // get connectors of collapsed tile
         string collapsedTileConnectors = 
@@ -110,52 +123,56 @@ public class LevelGen : MonoBehaviour
 
         //distribute to four adj. tiles:
         // set the right side connector of the left tile to the left side connector of the original tile
-        if (entropyMap[x - 1, y] != "")
+        if (entropyMap[x - 1, y] != null)
         {
             entropyMap[x - 1, y].Remove((int)entropyOffsets.Right);
             entropyMap[x - 1, y].Insert((int)entropyOffsets.Right, collapsedTileConnectors[(int)entropyOffsets.Left].ToString());
         }
         else 
         {
-            entropyMap[x - 1, y] = string.Concat("-", collapsedTileConnectors[(int)entropyOffsets.Left].ToString(), "--");
+            string newEntropy = new string(string.Concat("-", collapsedTileConnectors[(int)entropyOffsets.Left].ToString(), "--"));
+            entropyMap[x - 1, y] = newEntropy;
         }
-        Distribute(x - 1, y);
+        if (entropyMap[x - 1, y] != "----") Distribute(x - 1, y);
 
         // set the left side connector of the right tile to the right side connector of the original tile
-        if (entropyMap[x + 1, y] != "")
+        if (entropyMap[x + 1, y] != null)
         {
             entropyMap[x + 1, y].Remove((int)entropyOffsets.Left);
             entropyMap[x + 1, y].Insert((int)entropyOffsets.Left, collapsedTileConnectors[(int)entropyOffsets.Right].ToString());
         }
         else 
         {
-            entropyMap[x + 1, y] = string.Concat(collapsedTileConnectors[(int)entropyOffsets.Right].ToString(), "---");
-        }
-        Distribute(x + 1, y);
+            string newEntropy = new string(string.Concat(collapsedTileConnectors[(int)entropyOffsets.Right].ToString(), "---"));
+            entropyMap[x + 1, y] = newEntropy;
+        } 
+        if (entropyMap[x + 1, y] != "----") Distribute(x + 1, y);
 
         // set the back side connector of the front tile to the front side connector of the original tile
-        if (entropyMap[x, y + 1] != "")
+        if (entropyMap[x, y + 1] != null)
         {
             entropyMap[x, y + 1].Remove((int)entropyOffsets.Back);
             entropyMap[x, y + 1].Insert((int)entropyOffsets.Back, collapsedTileConnectors[(int)entropyOffsets.Front].ToString());
         }
         else 
         {
-            entropyMap[x, y + 1] = string.Concat("---", collapsedTileConnectors[(int)entropyOffsets.Front].ToString());
+            string newEntropy = new string(string.Concat("---", collapsedTileConnectors[(int)entropyOffsets.Front].ToString()));
+            entropyMap[x, y + 1] = newEntropy;
         }
-        Distribute(x, y + 1);
+        if (entropyMap[x, y + 1] != "----") Distribute(x, y + 1);
 
         // set the front side connector of the back tile to the back side connector of the original tile
-        if (entropyMap[x, y - 1] != "")
+        if (entropyMap[x, y - 1] != null)
         {
             entropyMap[x, y - 1].Remove((int)entropyOffsets.Front);
             entropyMap[x, y - 1].Insert((int)entropyOffsets.Front, collapsedTileConnectors[(int)entropyOffsets.Back].ToString());
         }
         else 
         {
-            entropyMap[x, y - 1] = string.Concat("---", collapsedTileConnectors[(int)entropyOffsets.Back].ToString());
+            string newEntropy = new string(string.Concat("---", collapsedTileConnectors[(int)entropyOffsets.Back].ToString()));
+            entropyMap[x, y - 1] = newEntropy;
         }
-        Distribute(x, y - 1);
+        if (entropyMap[x, y - 1] != "----") Distribute(x, y - 1);
 
         Debug.Log("(" + x + ", " + y + "): " + entropyMap[x, y]);
     }
