@@ -9,42 +9,17 @@ namespace Tile
 {
     public class TilePrototype : MonoBehaviour
     {
-        [Range(0, 1)]
-        public float probability = 1.0f;
-        public bool collapsed { get; set; }
-
         [Serializable]
         public class Face
         {
-            public char connectorId;
-            [Range(0, 3), Tooltip("Clockwise")]
-            public int rotation = 0;
-            public bool invariable = false;
+            public List<Tuple<GameObject, int>> Neighbors = new List<Tuple<GameObject, int>>();
         }
+        
+        public Face Left { get; set; }
+        public Face Front { get; set; }
+        public Face Right { get; set; } 
+        public Face Back { get; set; }
 
-        [Serializable]
-        public class VerticalFace : Face
-        {
-            public bool symetrical;
-        }
-
-        public bool walkable = false;
-
-        public VerticalFace Top;
-        public VerticalFace Bottom;
-        public Face Left;
-        public Face Right;
-        public Face Front;
-        public Face Back;
-
-        public string horizontalConnectors { get; set; }
-
-        void OnEnable()
-        {
-            horizontalConnectors = String.Concat(Left.connectorId, Right.connectorId, Front.connectorId, Back.connectorId);
-            Debug.Log(String.Concat(Left.connectorId, Right.connectorId, Front.connectorId, Back.connectorId));
-            Debug.Log(horizontalConnectors);
-        }
     }
 }
 
