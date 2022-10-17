@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -136,7 +136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: 0b86e32b522741b4c9cfd2f62dafa0c2, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: 0b86e32b522741b4c9cfd2f62dafa0c2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -192,6 +192,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b86e32b522741b4c9cfd2f62dafa0c2, type: 3}
+--- !u!1 &158665689 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1920910514974186063, guid: 0b86e32b522741b4c9cfd2f62dafa0c2, type: 3}
+  m_PrefabInstance: {fileID: 158665688}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &220339492
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -205,7 +210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
       propertyPath: m_LocalPosition.x
@@ -262,7 +267,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -362,6 +367,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
+--- !u!1 &398338111 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
+  m_PrefabInstance: {fileID: 398338110}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &551449039
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -375,7 +385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: d3e539440e44070439b7217c0532ab15, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: d3e539440e44070439b7217c0532ab15, type: 3}
       propertyPath: m_LocalPosition.x
@@ -474,6 +484,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8609307559170667795, guid: 79eab7cf8722e694595718b3e49180ca, type: 3}
+      propertyPath: Left.Neighbors.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8609307559170667795, guid: 79eab7cf8722e694595718b3e49180ca, type: 3}
+      propertyPath: Left.Neighbors.Array.data[0]
+      value: 
+      objectReference: {fileID: 398338111}
+    - target: {fileID: 8609307559170667795, guid: 79eab7cf8722e694595718b3e49180ca, type: 3}
+      propertyPath: Left.Neighbors.Array.data[1]
+      value: 
+      objectReference: {fileID: 158665689}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79eab7cf8722e694595718b3e49180ca, type: 3}
 --- !u!1001 &1512607679
@@ -489,7 +511,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7575011679441297764, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
       propertyPath: m_LocalPosition.x

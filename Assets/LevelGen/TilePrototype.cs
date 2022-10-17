@@ -12,14 +12,21 @@ namespace Tile
         [Serializable]
         public class Face
         {
-            public List<Tuple<GameObject, int>> Neighbors = new List<Tuple<GameObject, int>>();
+            [Serializable]
+            public struct Pair
+            {
+                public GameObject gameObject;
+                [Range(0, 3)]
+                public int rotation;
+            }
+            public List<Pair> Neighbors = new List<Pair>();
         }
-        
-        public Face Left { get; set; }
-        public Face Front { get; set; }
-        public Face Right { get; set; } 
-        public Face Back { get; set; }
 
+
+        public Face Left = new Face();
+        public Face Front = new Face();
+        public Face Right = new Face(); 
+        public Face Back = new Face();
     }
 }
 
