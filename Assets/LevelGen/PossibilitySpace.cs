@@ -9,9 +9,18 @@ public class PossibilitySpace : MonoBehaviour
     public List<GameObject> DefaultEntropy = new List<GameObject>();
     [System.NonSerialized]
     public List<GameObject> Entropy = new List<GameObject>();
+    private Material material { get; set; }
 
-    private void Start()
+    void Start()
     {
+        material = GetComponent<Renderer>().material;
         Entropy = DefaultEntropy;
+    }
+
+
+    
+    void Update()
+    {
+        material.color = new Color(material.color.r, material.color.g, material.color.b, (float)Entropy.Count / DefaultEntropy.Count);
     }
 }

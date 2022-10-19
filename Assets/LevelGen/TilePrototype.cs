@@ -12,14 +12,8 @@ namespace Tile
         [Serializable]
         public class Face
         {
-            [Serializable]
-            public struct Pair
-            {
-                public GameObject gameObject;
-                [Range(0, 3)]
-                public int rotation;
-            }
-            public List<Pair> Neighbors = new List<Pair>();
+            public List<GameObject> Neighbors = new List<GameObject>();
+            public List<int> NeighborRotation = new List<int>();
         }
 
 
