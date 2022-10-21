@@ -258,15 +258,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1355415153}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acefbaf9d786e4a4ca1c8826a1cb1568, type: 3}
+  m_Script: {fileID: 11500000, guid: f80f7eff4d02925438c3b28ed8b24c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelX: 10
   levelY: 10
-  Tileset:
-  - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-  - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
-  - {fileID: 1920910514974186063, guid: 0b86e32b522741b4c9cfd2f62dafa0c2, type: 3}
-  - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
-  - {fileID: 1920910514974186063, guid: 79eab7cf8722e694595718b3e49180ca, type: 3}
+  emptyTile: {fileID: 1920910514974186063, guid: e9d71707f34e0ef4ab6b9d59ca3824df, type: 3}
+  createGrid: 0
+  destroyGrid: 0
+  startGeneration: 0
   generate: 0

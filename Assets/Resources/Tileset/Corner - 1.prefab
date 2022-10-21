@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4250920012265124384}
   - component: {fileID: 8609307559170667795}
   m_Layer: 0
-  m_Name: Wall
+  m_Name: Corner - 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,14 +27,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1920910514974186063}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!23 &4399838777820736240
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -84,7 +84,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1920910514974186063}
-  m_Mesh: {fileID: 8733429697405204941, guid: c18811dfae9312c469f2e86f498410aa, type: 3}
+  m_Mesh: {fileID: -5221963080773851136, guid: d249f2b5593dd1e4c9979fdab199bc7d, type: 3}
 --- !u!65 &4250920012265124384
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -112,18 +112,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Left:
     Neighbors:
-    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
+    - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
+    NeighborRotation: 
   Front:
     Neighbors:
-    - {fileID: 1920910514974186063}
-    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+    - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
+    NeighborRotation: 
   Right:
     Neighbors:
     - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
+    NeighborRotation: 
   Back:
     Neighbors:
-    - {fileID: 1920910514974186063}
-    - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
+    NeighborRotation: 

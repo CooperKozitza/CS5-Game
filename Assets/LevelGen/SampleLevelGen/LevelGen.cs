@@ -9,7 +9,7 @@ public class LevelGen : MonoBehaviour
     public int levelY = 0;
 
     [Tooltip("The prefab used as a blank tile")]
-    public GameObject emptyTile = new GameObject();
+    public GameObject emptyTile;
 
     /// <summary>
     /// The grid of tiles
@@ -58,6 +58,7 @@ public class LevelGen : MonoBehaviour
     /// <param name="prefab">the prefab to convert to</param>
     void CovertTile(int x, int y, GameObject prefab)
     {
+        if (x < -1 || x > levelX - 1 || y < -1 || y > levelY - 1) return;
         if (Grid[x, y] != null)
         {
             Destroy(Grid[x, y]);
@@ -79,36 +80,51 @@ public class LevelGen : MonoBehaviour
         // check to make sure x and y are in range of the grid array
         if (x < 0 || x > levelX || y < 0 || y > levelY) return;
 
+        Debug.Log("Began propogation of tile at: (" + x.ToString() + ", " + y.ToString() + ")");
+
         GameObject tile = Grid[x, y];
-        // This is initialized differently depending on if the tile at (x, y) is an undecided blank prefab (line 84), or a decided tile prefab (line 113)
         TilePrototype tilePrototype;
+
+        List<Vector2Int> nextGeneration = new List<Vector2Int>();
 
         // If the tile that the changes are being propogated from is an undecided blank tile, create a new TilePrototype including all of the possibilities for that face from each tile in the entropy. This is because the PossibilitySpace component doesn't contain a Neighbors list, only an Entropy. 😵‍💫
         if (Grid[x, y].CompareTag("Undecided"))
         {
             PossibilitySpace blankTile = tile.GetComponent<PossibilitySpace>();
-            tilePrototype = new TilePrototype();
+            if (blankTile.Entropy.Count == blankTile.DefaultEntropy.Count || blankTile.previouslyPropogated)
+            {
+                Debug.Log("Stopped propogation of blank ore previouly propogated tile in superposition");
+                return;
+            }
+            
+            tilePrototype = tile.AddComponent<TilePrototype>();
+            blankTile.previouslyPropogated = true;
+
             foreach (GameObject possibility in blankTile.Entropy)
             {
                 var possibilityPrototype = possibility.GetComponent<TilePrototype>();
                 // Left Side possibilities ⬅️
                 foreach (GameObject leftPossibility in possibilityPrototype.Left.Neighbors)
                 {
+                    // Debug.Log("Added " + leftPossibility.name + " to left side of blank tile at: " + x.ToString() + ", " + y.ToString());
                     if (!tilePrototype.Left.Neighbors.Contains(leftPossibility)) tilePrototype.Left.Neighbors.Add(leftPossibility);
                 }
                 // Front Side possibilities ⬆️
                 foreach (GameObject frontPossibility in possibilityPrototype.Front.Neighbors)
                 {
+                    // Debug.Log("Added " + frontPossibility.name + " to front side of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Front.Neighbors.Contains(frontPossibility)) tilePrototype.Front.Neighbors.Add(frontPossibility);
                 }
                 // Right Side possibilities ➡️
                 foreach (GameObject rightPossibility in possibilityPrototype.Right.Neighbors)
                 {
+                    // Debug.Log("Added " + rightPossibility.name + " to right side of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Right.Neighbors.Contains(rightPossibility)) tilePrototype.Right.Neighbors.Add(rightPossibility);
                 }
                 // Back Side possibilities ⬇️
                 foreach (GameObject backPossibility in possibilityPrototype.Back.Neighbors)
                 {
+                    // Debug.Log("Added " + backPossibility.name + " to left back of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Back.Neighbors.Contains(backPossibility)) tilePrototype.Back.Neighbors.Add(backPossibility);
                 }
             }
@@ -127,7 +143,7 @@ public class LevelGen : MonoBehaviour
 
         // Distribute/propogate the entropy changes to the 4 adjacent tile
         // Left Side
-        if (x - 1 < 0)
+        if (x - 1 > -1)
         {
             // only propogate the changes in entopy to an undecided blank prefab, not a decided tile 🚫
             if (Grid[x - 1, y].CompareTag("Undecided"))
@@ -137,21 +153,21 @@ public class LevelGen : MonoBehaviour
                 PossibilitySpace blankTile = Grid[x - 1, y].GetComponent<PossibilitySpace>();
 
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
-                foreach (GameObject possibility in blankTile.Entropy)
+                for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Left.Neighbors.Contains(possibility))
+                    if (!tilePrototype.Left.Neighbors.Contains(blankTile.Entropy[i]))
                     {
-                        blankTile.Entropy.Remove(possibility);
+                        blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
                     }
                 }
 
                 // If a change was made to the left side tile's entropy, propogate it to it's adjacent tiles.
-                if (wasChange) PropogateEntropy(x - 1, y);
+                if (wasChange) nextGeneration.Add(new Vector2Int(x - 1, y));
             }
         }
         // Front Side
-        if (y + 1 > levelY)
+        if (y + 1 < levelY)
         {
             // only propogate the changes in entopy to an undecided blank prefab, not a decided tile 🚫
             if (Grid[x, y + 1].CompareTag("Undecided"))
@@ -161,21 +177,21 @@ public class LevelGen : MonoBehaviour
                 PossibilitySpace blankTile = Grid[x, y + 1].GetComponent<PossibilitySpace>();
 
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
-                foreach (GameObject possibility in blankTile.Entropy)
+                for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Front.Neighbors.Contains(possibility))
+                    if (!tilePrototype.Front.Neighbors.Contains(blankTile.Entropy[i]))
                     {
-                        blankTile.Entropy.Remove(possibility);
+                        blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
                     }
                 }
 
                 // If a change was made to the front side tile's entropy, propogate it to it's adjacent tiles.
-                if (wasChange) PropogateEntropy(x, y + 1);
+                if (wasChange) nextGeneration.Add(new Vector2Int(x, y + 1));
             }
         }
         // Right Side
-        if  (x + 1 > levelX)
+        if  (x + 1 < levelX)
         {
             // only propogate the changes in entopy to an undecided blank prefab, not a decided tile 🚫
             if (Grid[x + 1, y].CompareTag("Undecided"))
@@ -185,21 +201,21 @@ public class LevelGen : MonoBehaviour
                 PossibilitySpace blankTile = Grid[x + 1, y].GetComponent<PossibilitySpace>();
 
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
-                foreach (GameObject possibility in blankTile.Entropy)
+                for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Right.Neighbors.Contains(possibility))
+                    if (!tilePrototype.Right.Neighbors.Contains(blankTile.Entropy[i]))
                     {
-                        blankTile.Entropy.Remove(possibility);
+                        blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
                     }
                 }
 
                 // If a change was made to the right side tile's entropy, propogate it to it's adjacent tiles.
-                if (wasChange) PropogateEntropy(x + 1, y);
+                if (wasChange) nextGeneration.Add(new Vector2Int(x + 1, y));
             }
         }
         // Back Side
-        if  (y - 1 < 0)
+        if  (y - 1 > -1)
         {
             // only propogate the changes in entopy to an undecided blank prefab, not a decided tile 🚫
             if (Grid[x, y - 1].CompareTag("Undecided"))
@@ -209,18 +225,29 @@ public class LevelGen : MonoBehaviour
                 PossibilitySpace blankTile = Grid[x, y - 1].GetComponent<PossibilitySpace>();
 
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
-                foreach (GameObject possibility in blankTile.Entropy)
+                for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Back.Neighbors.Contains(possibility))
+                    if (!tilePrototype.Back.Neighbors.Contains(blankTile.Entropy[i]))
                     {
-                        blankTile.Entropy.Remove(possibility);
+                        blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
                     }
                 }
 
                 // If a change was made to the back side tile's entropy, propogate it to it's adjacent tiles.
-                if (wasChange) PropogateEntropy(x, y - 1);
+                if (wasChange) nextGeneration.Add(new Vector2Int(x, y - 1));
             }
+        }
+
+        foreach (Vector2Int coord in nextGeneration)
+        {
+            PropogateEntropy(coord.x, coord.y);
+        }
+
+        if (tile.CompareTag("Undecided"))
+        {
+            Destroy(tilePrototype);
+            tile.GetComponent<PossibilitySpace>().previouslyPropogated = false;
         }
     }
 
@@ -238,17 +265,26 @@ public class LevelGen : MonoBehaviour
         // Fill the list of options with the four adjacent tiles around the tile at (x, y)
         for (int i = 0; i < 4; i++)
         {
-            int xOffset = i == 1 ? -1 : i == 2 ? 1 : 0;
-            int yOffset = i == 3 ? -1 : i == 4 ? 1 : 0;
+            int xOffset = i == 0 ? -1 : i == 2 ? 1 : 0;
+            int yOffset = i == 1 ? 1 : i == 3 ? -1 : 0;
 
-            if (Grid[x + xOffset, y + yOffset] != null)
+            Debug.Log(xOffset.ToString() + ", " + yOffset.ToString());
+
+            if (x + xOffset > -1 && x + xOffset < levelX && y + yOffset > -1 && y + yOffset < levelY)
             {
-                if (Grid[x + xOffset, y + yOffset].CompareTag("Undecided"))
+                if (Grid[x + xOffset, y + yOffset] != null)
                 {
-                    options.Add(Grid[x + xOffset, y + yOffset].GetComponent<PossibilitySpace>());
-                    optionCoordinates.Add(new Vector2Int(x + xOffset, y + yOffset));
+                    if (Grid[x + xOffset, y + yOffset].CompareTag("Undecided"))
+                    {
+                        PossibilitySpace option = Grid[x + xOffset, y + yOffset].GetComponent<PossibilitySpace>();
+                        if (option.Entropy.Count > 0)
+                        {
+                            options.Add(option);
+                            optionCoordinates.Add(new Vector2Int(x + xOffset, y + yOffset));
+                        }
+                    }
                 }
-            }
+            }    
         }
 
         // Remove options until only the shortest entropy tiles remain
@@ -268,6 +304,11 @@ public class LevelGen : MonoBehaviour
         if (options.Count > 1)
         {
             return optionCoordinates[Random.Range(0, optionCoordinates.Count + 1)];
+        }
+        else if (options.Count == 0)
+        {
+            Debug.Log("Failed to retrive next tile for tile at: " + new Vector2Int(x, y).ToString());
+            return new Vector2Int(x - 1, y);
         }
         else
         {
@@ -316,6 +357,8 @@ public class LevelGen : MonoBehaviour
     {
         Vector2Int nextTileCoords = GetNextTileCoords(lastX, lastY);
 
+        Debug.Log("Chose: " + nextTileCoords.ToString());
+
         if (!Grid[nextTileCoords.x, nextTileCoords.y].CompareTag("Undecided"))
         {
             Debug.Log("Tile selected by the GetNextTileCoords was not undecided");
@@ -329,5 +372,29 @@ public class LevelGen : MonoBehaviour
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
     }
 
+    [InspectorButton("Generate")]
+    public bool generate = false;
+    void Generate()
+    {
+        bool complete = false;
+
+        while (!complete)
+        {
+            Step(LastTile.x, LastTile.y);
+            for (int i = 0; i < levelX; i++)
+            {
+                for (int j = 0; j < levelY; j++)
+                {
+                    if (Grid[i, j] != null && Grid[i, j].CompareTag("Undecided"))
+                    {
+                        complete = false;
+                        break;
+                    }
+                    if (i == levelX - 1 && j == levelY - 1) complete = true;
+                }
+                if (!complete) break;
+            }
+        }
+    }
 
 }

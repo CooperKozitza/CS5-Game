@@ -110,31 +110,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add183e0fc45897499517410aa707c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  probability: 0.75
-  walkable: 0
-  Top:
-    connectorId: 108
-    rotation: 1
-    invariable: 0
-    symetrical: 0
-  Bottom:
-    connectorId: 102
-    rotation: 0
-    invariable: 1
-    symetrical: 1
   Left:
-    connectorId: 102
-    rotation: 0
-    invariable: 1
-  Right:
-    connectorId: 108
-    rotation: 3
-    invariable: 0
+    Neighbors:
+    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
+    NeighborRotation: 
   Front:
-    connectorId: 108
-    rotation: 0
-    invariable: 0
+    Neighbors:
+    - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
+    NeighborRotation: 
+  Right:
+    Neighbors:
+    - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
+    NeighborRotation: 
   Back:
-    connectorId: 102
-    rotation: 0
-    invariable: 1
+    Neighbors:
+    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
+    NeighborRotation: 

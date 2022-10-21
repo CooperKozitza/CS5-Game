@@ -11,11 +11,16 @@ namespace Tile
     {
         [Serializable]
         public class Face
-        {
+        { 
             public List<GameObject> Neighbors = new List<GameObject>();
-            public List<int> NeighborRotation = new List<int>();
         }
 
+        void Awake()
+        {
+            for (int i = 0; i < Left.Neighbors.Count; i++)
+            {
+            }
+        }
 
         public Face Left = new Face();
         public Face Front = new Face();
