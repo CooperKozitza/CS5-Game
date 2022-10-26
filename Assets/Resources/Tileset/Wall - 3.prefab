@@ -111,19 +111,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Left:
-    Neighbors:
+    permiable: 1
+    neighbors:
     - {fileID: 1920910514974186063}
     - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
   Front:
-    Neighbors:
+    permiable: 1
+    neighbors:
     - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
+    - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
   Right:
-    Neighbors:
+    permiable: 1
+    neighbors:
     - {fileID: 1920910514974186063}
     - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
   Back:
-    Neighbors:
+    permiable: 0
+    neighbors:
     - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}

@@ -111,18 +111,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Left:
-    Neighbors:
+    permiable: 1
+    neighbors:
+    - {fileID: 1920910514974186063}
     - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
-  Front:
-    Neighbors:
-    - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
-  Right:
-    Neighbors:
     - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
-  Back:
-    Neighbors:
+    - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+  Front:
+    permiable: 1
+    neighbors:
+    - {fileID: 1920910514974186063}
+    - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
     - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
-    - {fileID: 1920910514974186063, guid: b5f3b3165a763d346bea6decc1cb5d3d, type: 3}
+    - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
+    - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+  Right:
+    permiable: 1
+    neighbors:
+    - {fileID: 1920910514974186063}
+    - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
+    - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
+    - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
+    - {fileID: 1920910514974186063, guid: bb9eba1ffa7ef374a9de6a456dfc48b2, type: 3}
+  Back:
+    permiable: 1
+    neighbors:
+    - {fileID: 1920910514974186063}
+    - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
+    - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
+    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+    - {fileID: 1920910514974186063, guid: bb9eba1ffa7ef374a9de6a456dfc48b2, type: 3}

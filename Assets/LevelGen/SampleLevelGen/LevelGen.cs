@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Tile;
+using UnityEditor;
 
 public class LevelGen : MonoBehaviour
 {
@@ -24,11 +25,11 @@ public class LevelGen : MonoBehaviour
     void CreateGrid()
     {
         Grid = new GameObject[levelX, levelY];
-        for (int x = 0; x < levelX; x++)
+        for (int y = 0; y < levelY; y++)
         {
-            for (int y = 0; y < levelY; y++)
+            for (int x = 0; x < levelX; x++)
             {
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, y * 2), new Quaternion(0, 0, 0, 0));
+                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
                 Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
             }
         }
@@ -62,7 +63,7 @@ public class LevelGen : MonoBehaviour
         if (Grid[x, y] != null)
         {
             Destroy(Grid[x, y]);
-            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, y * 2), new Quaternion(0, 0, 0, 0));
+            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
         }
         else
         {
@@ -104,28 +105,28 @@ public class LevelGen : MonoBehaviour
             {
                 var possibilityPrototype = possibility.GetComponent<TilePrototype>();
                 // Left Side possibilities ⬅️
-                foreach (GameObject leftPossibility in possibilityPrototype.Left.Neighbors)
+                foreach (GameObject leftPossibility in possibilityPrototype.Left.neighbors)
                 {
                     // Debug.Log("Added " + leftPossibility.name + " to left side of blank tile at: " + x.ToString() + ", " + y.ToString());
-                    if (!tilePrototype.Left.Neighbors.Contains(leftPossibility)) tilePrototype.Left.Neighbors.Add(leftPossibility);
+                    if (!tilePrototype.Left.neighbors.Contains(leftPossibility)) tilePrototype.Left.neighbors.Add(leftPossibility);
                 }
                 // Front Side possibilities ⬆️
-                foreach (GameObject frontPossibility in possibilityPrototype.Front.Neighbors)
+                foreach (GameObject frontPossibility in possibilityPrototype.Front.neighbors)
                 {
                     // Debug.Log("Added " + frontPossibility.name + " to front side of blank tile at: " + x.ToString() + y.ToString());
-                    if (!tilePrototype.Front.Neighbors.Contains(frontPossibility)) tilePrototype.Front.Neighbors.Add(frontPossibility);
+                    if (!tilePrototype.Front.neighbors.Contains(frontPossibility)) tilePrototype.Front.neighbors.Add(frontPossibility);
                 }
                 // Right Side possibilities ➡️
-                foreach (GameObject rightPossibility in possibilityPrototype.Right.Neighbors)
+                foreach (GameObject rightPossibility in possibilityPrototype.Right.neighbors)
                 {
                     // Debug.Log("Added " + rightPossibility.name + " to right side of blank tile at: " + x.ToString() + y.ToString());
-                    if (!tilePrototype.Right.Neighbors.Contains(rightPossibility)) tilePrototype.Right.Neighbors.Add(rightPossibility);
+                    if (!tilePrototype.Right.neighbors.Contains(rightPossibility)) tilePrototype.Right.neighbors.Add(rightPossibility);
                 }
                 // Back Side possibilities ⬇️
-                foreach (GameObject backPossibility in possibilityPrototype.Back.Neighbors)
+                foreach (GameObject backPossibility in possibilityPrototype.Back.neighbors)
                 {
                     // Debug.Log("Added " + backPossibility.name + " to left back of blank tile at: " + x.ToString() + y.ToString());
-                    if (!tilePrototype.Back.Neighbors.Contains(backPossibility)) tilePrototype.Back.Neighbors.Add(backPossibility);
+                    if (!tilePrototype.Back.neighbors.Contains(backPossibility)) tilePrototype.Back.neighbors.Add(backPossibility);
                 }
             }
         }
@@ -138,6 +139,36 @@ public class LevelGen : MonoBehaviour
             {
                 Debug.Log(string.Concat("Failed to get TilePrototype component at ", x.ToString(), ", ", y.ToString()));
                 return;
+            }
+
+            // verify all elements of the neighbors list are prefabs, and if not replace it with its parent
+            for (int i = 0; i < tilePrototype.Left.neighbors.Count; i++)
+            {
+                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Left.neighbors[i]) != null)
+                {
+                    tilePrototype.Left.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Left.neighbors[i]);
+                }
+            }
+            for (int i = 0; i < tilePrototype.Front.neighbors.Count; i++)
+            {
+                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Front.neighbors[i]) != null)
+                {
+                    tilePrototype.Front.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Front.neighbors[i]);
+                }
+            }
+            for (int i = 0; i < tilePrototype.Right.neighbors.Count; i++)
+            {
+                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Right.neighbors[i]) != null)
+                {
+                    tilePrototype.Right.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Right.neighbors[i]);
+                }
+            }
+            for (int i = 0; i < tilePrototype.Back.neighbors.Count; i++)
+            {
+                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Back.neighbors[i]) != null)
+                {
+                    tilePrototype.Back.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Back.neighbors[i]);
+                }
             }
         }
 
@@ -155,7 +186,7 @@ public class LevelGen : MonoBehaviour
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
                 for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Left.Neighbors.Contains(blankTile.Entropy[i]))
+                    if (!tilePrototype.Left.neighbors.Contains(blankTile.Entropy[i]))
                     {
                         blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
@@ -179,7 +210,7 @@ public class LevelGen : MonoBehaviour
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
                 for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Front.Neighbors.Contains(blankTile.Entropy[i]))
+                    if (!tilePrototype.Front.neighbors.Contains(blankTile.Entropy[i]))
                     {
                         blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
@@ -203,7 +234,7 @@ public class LevelGen : MonoBehaviour
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
                 for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Right.Neighbors.Contains(blankTile.Entropy[i]))
+                    if (!tilePrototype.Right.neighbors.Contains(blankTile.Entropy[i]))
                     {
                         blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
@@ -227,7 +258,7 @@ public class LevelGen : MonoBehaviour
                 // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
                 for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
                 {
-                    if (!tilePrototype.Back.Neighbors.Contains(blankTile.Entropy[i]))
+                    if (!tilePrototype.Back.neighbors.Contains(blankTile.Entropy[i]))
                     {
                         blankTile.Entropy.RemoveAt(i);
                         wasChange = true;
@@ -292,7 +323,7 @@ public class LevelGen : MonoBehaviour
         { 
             for (int j = 0; j < options.Count; j++)
             {
-                if (options[j].Entropy.Count < options[i].Entropy.Count && i != j)
+                if (options[j].Entropy.Count < options[i].Entropy.Count && i != j && options[j].Entropy.Count - 1 > 0)
                 {
                     options.RemoveAt(j);
                     optionCoordinates.RemoveAt(j);
@@ -303,7 +334,7 @@ public class LevelGen : MonoBehaviour
         // If there is more than one option, choose one at random, otherwise return the only option
         if (options.Count > 1)
         {
-            return optionCoordinates[Random.Range(0, optionCoordinates.Count + 1)];
+            return optionCoordinates[Random.Range(0, optionCoordinates.Count)];
         }
         else if (options.Count == 0)
         {
@@ -343,7 +374,7 @@ public class LevelGen : MonoBehaviour
         int randY = Random.Range(0, levelY);
 
         PossibilitySpace randomTile = Grid[randX, randY].GetComponent<PossibilitySpace>();
-        CovertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count + 1)]);
+        CovertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
         PropogateEntropy(randX, randY);
         LastTile = new Vector2Int(randX, randY);
     }
@@ -355,6 +386,7 @@ public class LevelGen : MonoBehaviour
     /// <param name="lastY"></param>
     void Step(int lastX, int lastY)
     {
+        if (lastX < 0 || lastX > levelX || lastY < 0 || lastY > levelY) return;
         Vector2Int nextTileCoords = GetNextTileCoords(lastX, lastY);
 
         Debug.Log("Chose: " + nextTileCoords.ToString());
@@ -367,7 +399,7 @@ public class LevelGen : MonoBehaviour
 
         PossibilitySpace nextTileOptions = Grid[nextTileCoords.x, nextTileCoords.y].GetComponent<PossibilitySpace>();
 
-        CovertTile(nextTileCoords.x, nextTileCoords.y, nextTileOptions.Entropy[Random.Range(0, nextTileOptions.Entropy.Count + 1)]);
+        CovertTile(nextTileCoords.x, nextTileCoords.y, nextTileOptions.Entropy[Random.Range(0, nextTileOptions.Entropy.Count)]);
         PropogateEntropy(nextTileCoords.x, nextTileCoords.y);
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
     }

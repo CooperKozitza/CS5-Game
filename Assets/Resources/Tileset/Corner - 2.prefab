@@ -111,18 +111,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Left:
-    Neighbors:
+    permiable: 1
+    neighbors:
     - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
-    NeighborRotation: 
+    - {fileID: 1920910514974186063, guid: bb9eba1ffa7ef374a9de6a456dfc48b2, type: 3}
   Front:
-    Neighbors:
+    permiable: 0
+    neighbors:
     - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    NeighborRotation: 
   Right:
-    Neighbors:
+    permiable: 0
+    neighbors:
     - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    NeighborRotation: 
   Back:
-    Neighbors:
+    permiable: 1
+    neighbors:
     - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
-    NeighborRotation: 
+    - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
