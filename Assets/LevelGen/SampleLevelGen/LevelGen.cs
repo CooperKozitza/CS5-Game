@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEditor;
 
@@ -84,7 +85,7 @@ public class LevelGen : MonoBehaviour
     /// </summary>
     /// <param name="x">the x position in the grid of the tile to propogate from</param>
     /// <param name="y">the y position in the grid of the tile to propogate from</param>
-    void PropogateEntropy(int x, int y)
+    async Task PropogateEntropy(int x, int y)
     {
         // check to make sure x and y are in range of the grid array
         if (x < 0 || x > levelX || y < 0 || y > levelY) return;
@@ -255,7 +256,7 @@ public class LevelGen : MonoBehaviour
 
         foreach (Vector2Int coord in nextGeneration)
         {
-            PropogateEntropy(coord.x, coord.y);
+            await PropogateEntropy(coord.x, coord.y);
         }
 
         if (tile.CompareTag("Undecided"))
@@ -385,16 +386,16 @@ public class LevelGen : MonoBehaviour
 
         PossibilitySpace randomTile = Grid[randX, randY].GetComponent<PossibilitySpace>();
         CovertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
-        PropogateEntropy(randX, randY);
+        PropogateEntropy(randX, randY).RunSynchronously();
         LastTile = new Vector2Int(randX, randY);
     }
 
     [InspectorButton("Step")]
     public bool step = false;
     /// <summary>
-    /// One 'step' in the algorithm
+    /// One 'step' in the algorithms
     /// </summary>
-    void Step()
+    async Task Step()
     {
         if (LastTile.x < 0 || LastTile.x > levelX - 1 || LastTile.y < 0 || LastTile.y > levelY - 1) return;
         Vector2Int nextTileCoords = GetNextTileCoords(LastTile.x, LastTile.y);
@@ -410,7 +411,7 @@ public class LevelGen : MonoBehaviour
         PossibilitySpace nextTileOptions = Grid[nextTileCoords.x, nextTileCoords.y].GetComponent<PossibilitySpace>();
 
         CovertTile(nextTileCoords.x, nextTileCoords.y, nextTileOptions.Entropy[Random.Range(0, nextTileOptions.Entropy.Count)]);
-        PropogateEntropy(nextTileCoords.x, nextTileCoords.y);
+        await PropogateEntropy(nextTileCoords.x, nextTileCoords.y);
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
 
         for (int y = 0; y < levelY; y++)
@@ -433,7 +434,7 @@ public class LevelGen : MonoBehaviour
 
     [InspectorButton("Generate")]
     public bool generate = false;
-    void Generate()
+    async void Generate()
     {
         if (!generated)
         {
@@ -451,7 +452,7 @@ public class LevelGen : MonoBehaviour
         bool complete = false;
         while (!complete)
         {
-            Step();
+            await Step();
             complete = true;
             for (int y = 0; y < levelY; y++)
             {
