@@ -110,22 +110,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add183e0fc45897499517410aa707c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Left:
-    permiable: 1
-    neighbors:
-    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-    - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
-  Front:
-    permiable: 1
-    neighbors:
-    - {fileID: 1920910514974186063}
-    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
-  Right:
-    permiable: 0
-    neighbors:
-    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-  Back:
-    permiable: 1
-    neighbors:
-    - {fileID: 1920910514974186063}
-    - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+  rotation: 0
+  neighborsList: {fileID: 11400000, guid: 3ee6c9bfee60916478129481d10a791b, type: 2}

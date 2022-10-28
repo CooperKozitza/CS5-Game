@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Tile;
 using UnityEditor;
 
 public class LevelGen : MonoBehaviour
 {
     public int levelX = 0;
     public int levelY = 0;
+
+    private bool generated = false;
 
     [Tooltip("The prefab used as a blank tile")]
     public GameObject emptyTile;
@@ -59,11 +60,18 @@ public class LevelGen : MonoBehaviour
     /// <param name="prefab">the prefab to convert to</param>
     void CovertTile(int x, int y, GameObject prefab)
     {
+        TilePrototype proto = prefab.GetComponent<TilePrototype>();
+        if (proto == null)
+        {
+            Debug.Log("Attempted to covert tile to a non-tile gameObject :(");
+        }
         if (x < -1 || x > levelX - 1 || y < -1 || y > levelY - 1) return;
         if (Grid[x, y] != null)
         {
             Destroy(Grid[x, y]);
-            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+            Quaternion quaternion = new Quaternion();
+            quaternion.eulerAngles = new Vector3(0, proto.rotation * 90, 0);
+            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelY - y) * 2), quaternion);
         }
         else
         {
@@ -84,7 +92,7 @@ public class LevelGen : MonoBehaviour
         Debug.Log("Began propogation of tile at: (" + x.ToString() + ", " + y.ToString() + ")");
 
         GameObject tile = Grid[x, y];
-        TilePrototype tilePrototype;
+        NeighborsList tilePrototype;
 
         List<Vector2Int> nextGeneration = new List<Vector2Int>();
 
@@ -94,36 +102,41 @@ public class LevelGen : MonoBehaviour
             PossibilitySpace blankTile = tile.GetComponent<PossibilitySpace>();
             if (blankTile.Entropy.Count == blankTile.DefaultEntropy.Count || blankTile.previouslyPropogated)
             {
-                Debug.Log("Stopped propogation of blank ore previouly propogated tile in superposition");
+                Debug.Log("Stopped propogation of blank or previouly propogated tile in superposition");
                 return;
             }
-            
-            tilePrototype = tile.AddComponent<TilePrototype>();
+
+            tilePrototype = (NeighborsList)ScriptableObject.CreateInstance("NeighborsList");
+            if (tilePrototype == null)
+            {
+                Debug.Log("Failed to create NeighborsList Instance");
+                return;
+            }
             blankTile.previouslyPropogated = true;
 
             foreach (GameObject possibility in blankTile.Entropy)
             {
                 var possibilityPrototype = possibility.GetComponent<TilePrototype>();
                 // Left Side possibilities ⬅️
-                foreach (GameObject leftPossibility in possibilityPrototype.Left.neighbors)
+                foreach (GameObject leftPossibility in possibilityPrototype.neighborsList.Left.neighbors)
                 {
                     // Debug.Log("Added " + leftPossibility.name + " to left side of blank tile at: " + x.ToString() + ", " + y.ToString());
                     if (!tilePrototype.Left.neighbors.Contains(leftPossibility)) tilePrototype.Left.neighbors.Add(leftPossibility);
                 }
                 // Front Side possibilities ⬆️
-                foreach (GameObject frontPossibility in possibilityPrototype.Front.neighbors)
+                foreach (GameObject frontPossibility in possibilityPrototype.neighborsList.Front.neighbors)
                 {
                     // Debug.Log("Added " + frontPossibility.name + " to front side of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Front.neighbors.Contains(frontPossibility)) tilePrototype.Front.neighbors.Add(frontPossibility);
                 }
                 // Right Side possibilities ➡️
-                foreach (GameObject rightPossibility in possibilityPrototype.Right.neighbors)
+                foreach (GameObject rightPossibility in possibilityPrototype.neighborsList.Right.neighbors)
                 {
                     // Debug.Log("Added " + rightPossibility.name + " to right side of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Right.neighbors.Contains(rightPossibility)) tilePrototype.Right.neighbors.Add(rightPossibility);
                 }
                 // Back Side possibilities ⬇️
-                foreach (GameObject backPossibility in possibilityPrototype.Back.neighbors)
+                foreach (GameObject backPossibility in possibilityPrototype.neighborsList.Back.neighbors)
                 {
                     // Debug.Log("Added " + backPossibility.name + " to left back of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Back.neighbors.Contains(backPossibility)) tilePrototype.Back.neighbors.Add(backPossibility);
@@ -133,42 +146,12 @@ public class LevelGen : MonoBehaviour
         else
         {
             // Attempt to retrive the TilePrototype component from the tile
-            tilePrototype = tile.GetComponent<TilePrototype>();
-            // Send a debug message if it is null 😥
+            tilePrototype = tile.GetComponent<TilePrototype>().neighborsList;
+            // Send a debug message if it is null 😥 (●'◡'●)
             if (tilePrototype == null)
             {
                 Debug.Log(string.Concat("Failed to get TilePrototype component at ", x.ToString(), ", ", y.ToString()));
                 return;
-            }
-
-            // verify all elements of the neighbors list are prefabs, and if not replace it with its parent
-            for (int i = 0; i < tilePrototype.Left.neighbors.Count; i++)
-            {
-                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Left.neighbors[i]) != null)
-                {
-                    tilePrototype.Left.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Left.neighbors[i]);
-                }
-            }
-            for (int i = 0; i < tilePrototype.Front.neighbors.Count; i++)
-            {
-                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Front.neighbors[i]) != null)
-                {
-                    tilePrototype.Front.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Front.neighbors[i]);
-                }
-            }
-            for (int i = 0; i < tilePrototype.Right.neighbors.Count; i++)
-            {
-                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Right.neighbors[i]) != null)
-                {
-                    tilePrototype.Right.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Right.neighbors[i]);
-                }
-            }
-            for (int i = 0; i < tilePrototype.Back.neighbors.Count; i++)
-            {
-                if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Back.neighbors[i]) != null)
-                {
-                    tilePrototype.Back.neighbors[i] = PrefabUtility.GetCorrespondingObjectFromOriginalSource(tilePrototype.Back.neighbors[i]);
-                }
             }
         }
 
@@ -299,8 +282,6 @@ public class LevelGen : MonoBehaviour
             int xOffset = i == 0 ? -1 : i == 2 ? 1 : 0;
             int yOffset = i == 1 ? 1 : i == 3 ? -1 : 0;
 
-            Debug.Log(xOffset.ToString() + ", " + yOffset.ToString());
-
             if (x + xOffset > -1 && x + xOffset < levelX && y + yOffset > -1 && y + yOffset < levelY)
             {
                 if (Grid[x + xOffset, y + yOffset] != null)
@@ -318,16 +299,45 @@ public class LevelGen : MonoBehaviour
             }    
         }
 
-        // Remove options until only the shortest entropy tiles remain
-        for (int i = 0; i < options.Count; i++)
-        { 
-            for (int j = 0; j < options.Count; j++)
+        if (options.Count == 0)
+        {
+            while (true)
             {
-                if (options[j].Entropy.Count < options[i].Entropy.Count && i != j && options[j].Entropy.Count - 1 > 0)
+                int randX = Random.Range(0, levelX);
+                int randY = Random.Range(0, levelY);
+
+                if (!Grid[randX, randY].CompareTag("Undecided")) continue;
+
+                for (int i = 0; i < 5; i++)
+                {
+                    int xOffset = i == 0 ? -1 : i == 2 ? 1 : 0;
+                    int yOffset = i == 1 ? 1 : i == 3 ? -1 : 0;
+                    if (randX + xOffset < 0 || randX + xOffset > levelX - 1 || randY + yOffset < 0 || randY + yOffset > levelY - 1) continue;
+                    Debug.Log("🙃 (" + (randX + xOffset).ToString() + ", " + (randY + yOffset).ToString() + ")");
+                    if (Grid[randX + xOffset, randY + yOffset].CompareTag("Undecided"))
+                    {
+                        PossibilitySpace validNeighborPossibilitySpace = Grid[randX + xOffset, randY + yOffset].GetComponent<PossibilitySpace>();
+                        if (validNeighborPossibilitySpace.Entropy.Count > 0 && validNeighborPossibilitySpace.Entropy.Count < validNeighborPossibilitySpace.DefaultEntropy.Count)
+                        {
+                            return new Vector2Int(randX, randY);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remove options until only the shortest entropy tiles remain
+        for (int i = options.Count - 1; i > -1; i--)
+        {
+            for (int j = options.Count - 1; j > -1; j--)
+            {
+                if (i > options.Count || i < 0 || options.Count < 2 || i == j) break;
+                if (options[j].Entropy.Count < options[i].Entropy.Count && options[j].Entropy.Count - 1 > 0)
                 {
                     options.RemoveAt(j);
                     optionCoordinates.RemoveAt(j);
                 }
+                if (options.Count < 2) break;
             }
         }
 
@@ -336,7 +346,7 @@ public class LevelGen : MonoBehaviour
         {
             return optionCoordinates[Random.Range(0, optionCoordinates.Count)];
         }
-        else if (options.Count == 0)
+        else if (options.Count < 1)
         {
             Debug.Log("Failed to retrive next tile for tile at: " + new Vector2Int(x, y).ToString());
             return new Vector2Int(x - 1, y);
@@ -379,15 +389,15 @@ public class LevelGen : MonoBehaviour
         LastTile = new Vector2Int(randX, randY);
     }
 
+    [InspectorButton("Step")]
+    public bool step = false;
     /// <summary>
     /// One 'step' in the algorithm
     /// </summary>
-    /// <param name="lastX"></param>
-    /// <param name="lastY"></param>
-    void Step(int lastX, int lastY)
+    void Step()
     {
-        if (lastX < 0 || lastX > levelX || lastY < 0 || lastY > levelY) return;
-        Vector2Int nextTileCoords = GetNextTileCoords(lastX, lastY);
+        if (LastTile.x < 0 || LastTile.x > levelX - 1 || LastTile.y < 0 || LastTile.y > levelY - 1) return;
+        Vector2Int nextTileCoords = GetNextTileCoords(LastTile.x, LastTile.y);
 
         Debug.Log("Chose: " + nextTileCoords.ToString());
 
@@ -402,31 +412,106 @@ public class LevelGen : MonoBehaviour
         CovertTile(nextTileCoords.x, nextTileCoords.y, nextTileOptions.Entropy[Random.Range(0, nextTileOptions.Entropy.Count)]);
         PropogateEntropy(nextTileCoords.x, nextTileCoords.y);
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
+
+        for (int y = 0; y < levelY; y++)
+        {
+            for (int x = 0; x < levelX; x++)
+            {
+                if (!Grid[x, y].CompareTag("Undecided")) continue;
+                PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
+                if (possibilitySpace.Entropy.Count == 1) CovertTile(x, y, possibilitySpace.Entropy[0]);
+                else if (possibilitySpace.Entropy.Count == 0)
+                {
+                    Debug.Log("Generation Error, Restarted Gen");
+                    DestroyGrid();
+                    CreateGrid();
+                    StartGeneration();
+                }
+            }
+        }
     }
 
     [InspectorButton("Generate")]
     public bool generate = false;
     void Generate()
     {
-        bool complete = false;
+        if (!generated)
+        {
+            CreateGrid();
+            StartGeneration();
+        }
+        else
+        {
+            DestroyGrid();
+            CreateGrid();
+            StartGeneration();
+            generated = false;
+        }
 
+        bool complete = false;
         while (!complete)
         {
-            Step(LastTile.x, LastTile.y);
-            for (int i = 0; i < levelX; i++)
+            Step();
+            complete = true;
+            for (int y = 0; y < levelY; y++)
             {
-                for (int j = 0; j < levelY; j++)
+                for (int x = 0; x < levelX; x++)
                 {
-                    if (Grid[i, j] != null && Grid[i, j].CompareTag("Undecided"))
+                    if (Grid[x, y].CompareTag("Undecided"))
                     {
                         complete = false;
                         break;
                     }
-                    if (i == levelX - 1 && j == levelY - 1) complete = true;
                 }
                 if (!complete) break;
             }
         }
-    }
+        bool valid = true;
+        if (complete)
+        {
+            NeighborsList[,] validationGrid = new NeighborsList[levelX, levelY];
+            for (int y = 0; y < levelY; y++)
+            {
+                for (int x = 0; x < levelX; x++)
+                {
+                    validationGrid[x, y] = Grid[x, y].GetComponent<TilePrototype>().neighborsList;
+                }
+            }
 
+            for (int y = 0; y < levelY; y++)
+            {
+                for (int x = 0; x < levelX; x++)
+                {
+                    GameObject self = validationGrid[x, y].Self;
+                    if (x - 1 > -1)
+                    {
+                        if (!validationGrid[x - 1, y].Right.neighbors.Contains(self)) valid = false;
+                    }
+                    if (y + 1 < levelY)
+                    {
+                        if (!validationGrid[x, y + 1].Back.neighbors.Contains(self)) valid = false;
+                    }
+                    if (x + 1 < levelX)
+                    {
+                        if (!validationGrid[x + 1, y].Left.neighbors.Contains(self)) valid = false;
+                    }
+                    if (y - 1 > -1)
+                    {
+                        if (!validationGrid[x, y - 1].Front.neighbors.Contains(self)) valid = false;
+                    }
+                    if (!valid) break;
+                }
+                if (!valid) break;
+            }
+        }
+        if (valid)
+        {
+            generated = true;
+        }
+        else
+        {
+            DestroyGrid();
+            Generate();
+        }
+    }
 }

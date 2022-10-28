@@ -11,7 +11,7 @@ public class PossibilitySpace : MonoBehaviour
     private Material material { get; set; }
     public bool previouslyPropogated { get; set; }
 
-    void Start()
+    void Awake()
     {
         material = GetComponent<Renderer>().material;
         foreach (GameObject possibility in DefaultEntropy) Entropy.Add(possibility);
