@@ -20,6 +20,7 @@ public class GhostPathfinding : MonoBehaviour
         targetPosition = new Vector3(0, 0, 0);
 
         player = GameObject.FindGameObjectWithTag("Player");
+
         if (player == null)
         {
             Debug.Log("Player not found");
