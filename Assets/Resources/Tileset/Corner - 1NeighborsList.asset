@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a21404b7287e754e83ad296a585df1e, type: 3}
+  m_Name: Corner - 1NeighborsList
+  m_EditorClassIdentifier: 
+  Self: {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+  Left:
+    permiable: 1
+    neighbors:
+    - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
+    - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
+  Front:
+    permiable: 1
+    neighbors:
+    - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
+    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+  Right:
+    permiable: 0
+    neighbors:
+    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
+  Back:
+    permiable: 0
+    neighbors:
+    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
