@@ -22,7 +22,8 @@ MonoBehaviour:
     permiable: 1
     neighbors:
     - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
-    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+    - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+    - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
   Right:
     permiable: 0
     neighbors:
@@ -31,4 +32,5 @@ MonoBehaviour:
     permiable: 1
     neighbors:
     - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
+    - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
     - {fileID: 1920910514974186063, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}

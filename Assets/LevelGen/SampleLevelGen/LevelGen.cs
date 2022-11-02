@@ -25,14 +25,48 @@ public class LevelGen : MonoBehaviour
     /// </summary>
     void CreateGrid()
     {
+        List<Vector2Int> edges = new List<Vector2Int>();
         Grid = new GameObject[levelX, levelY];
         for (int y = 0; y < levelY; y++)
         {
             for (int x = 0; x < levelX; x++)
             {
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
-                Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
+                if (x == 0 || y == 0 || x == levelX - 1 || y == levelY - 1)
+                {
+                    if (x != 0 && y != 0 || x != levelX - 1 && y != levelY - 1)
+                    {
+                        int rotation = x == 0 ? 2 : y == 0 ? 3 : y == levelY - 1 ? 1 : 0;
+
+                        Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                        Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
+
+                        PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
+
+                        for (int i = possibilitySpace.Entropy.Count - 1; i > -1; i--)
+                        {
+                            TilePrototype tilePrototype = possibilitySpace.Entropy[i].GetComponent<TilePrototype>();
+                            if (tilePrototype.rotation != rotation) possibilitySpace.Entropy.RemoveAt(i);
+                        }
+
+                        edges.Add(new Vector2Int(x, y));
+                    }
+                    else
+                    {
+                        Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                        Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
+                    }
+                }
+                else
+                {
+                    Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                    Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
+                }
             }
+        }
+
+        foreach (Vector2Int edge in edges)
+        {
+            PropogateEntropy(edge.x, edge.y);
         }
     }
 

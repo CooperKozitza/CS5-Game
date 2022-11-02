@@ -17,17 +17,19 @@ MonoBehaviour:
     permiable: 0
     neighbors:
     - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
+    - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
   Front:
     permiable: 0
     neighbors:
-    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
+    - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
+    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
   Right:
     permiable: 1
     neighbors:
-    - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
-    - {fileID: 1920910514974186063, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+    - {fileID: 1920910514974186063, guid: 32a52564881d67942a9765ff0c49aa49, type: 3}
+    - {fileID: 1920910514974186063, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
   Back:
     permiable: 1
     neighbors:
+    - {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
     - {fileID: 1920910514974186063, guid: ab3f3f6e67953084283b2a77a1438e22, type: 3}
-    - {fileID: 1920910514974186063, guid: bb9eba1ffa7ef374a9de6a456dfc48b2, type: 3}
