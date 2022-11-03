@@ -7,6 +7,9 @@ using System;
 
 public class TilePrototype : MonoBehaviour
 {
+    [Range(0, 100)]
+    public int probability = 0;
+    public bool invariable = false;
     [Range(0, 3)]
     public int rotation = 0;
     public NeighborsList neighborsList;
