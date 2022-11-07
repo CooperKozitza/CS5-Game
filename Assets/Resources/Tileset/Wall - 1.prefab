@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add183e0fc45897499517410aa707c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  probability: 0
+  probability: 60
   invariable: 0
   rotation: 1
   neighborsList: {fileID: 11400000, guid: 6d028778799ff44498ff094a54710935, type: 2}

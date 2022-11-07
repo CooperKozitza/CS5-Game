@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class LevelGen : MonoBehaviour
+public class LevelGenerator : MonoBehaviour
 {
-    public int levelX = 0;
-    public int levelY = 0;
+    LevelManager levelManager;
 
     private bool generated = false;
 
     [Tooltip("The prefab used as a blank tile")]
     public GameObject emptyTile;
-
-    private enum Directions
-    {
-        Left, Front, Right, Back
-    }
 
     /// <summary>
     /// The grid of tiles
@@ -30,26 +24,26 @@ public class LevelGen : MonoBehaviour
     /// </summary>
     void CreateGrid()
     {
-        Grid = new GameObject[levelX, levelY];
+        Grid = new GameObject[levelManager.levelX, levelManager.levelY];
 
-        for (int y = 0; y < levelY; y++)
+        for (int y = 0; y < levelManager.levelY; y++)
         {
-            for (int x = 0; x < levelX; x++)
+            for (int x = 0; x < levelManager.levelX; x++)
             {
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
                 Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
             }
         }
 
-        for (int y = 0; y < levelY; y++)
+        for (int y = 0; y < levelManager.levelY; y++)
         {
-            for (int x = 0; x < levelX; x++)
+            for (int x = 0; x < levelManager.levelX; x++)
             {
-                if (x == 0 || x == levelX - 1 || y == 0 || y == levelY - 1)
+                if (x == 0 || x == levelManager.levelX - 1 || y == 0 || y == levelManager.levelY - 1)
                 {
-                    if (!((x == 0 && y == 0) || (x == levelX - 1 && y == levelY - 1) || (x == 0 && y == levelY - 1) || (y == 0 && x == levelX - 1)))
+                    if (!((x == 0 && y == 0) || (x == levelManager.levelX - 1 && y == levelManager.levelY - 1) || (x == 0 && y == levelManager.levelY - 1) || (y == 0 && x == levelManager.levelX - 1)))
                     {
-                        int rotation = x == 0 ? 2 : y == 0 ? 3 : y == levelY - 1 ? 1 : 0;
+                        int rotation = x == 0 ? 2 : y == 0 ? 3 : y == levelManager.levelY - 1 ? 1 : 0;
                         PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
 
                         for (int i = possibilitySpace.Entropy.Count - 1; i > -1; i--)
@@ -94,13 +88,13 @@ public class LevelGen : MonoBehaviour
         {
             Debug.Log("Attempted to covert tile to a non-tile gameObject :(");
         }
-        if (x < -1 || x > levelX - 1 || y < -1 || y > levelY - 1) return;
+        if (x < -1 || x > levelManager.levelX - 1 || y < -1 || y > levelManager.levelY - 1) return;
         if (Grid[x, y] != null)
         {
             Destroy(Grid[x, y]);
             Quaternion quaternion = new Quaternion();
             quaternion.eulerAngles = new Vector3(0, proto.rotation * 90, 0);
-            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelY - y) * 2), quaternion);
+            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), quaternion);
         }
         else
         {
@@ -116,7 +110,7 @@ public class LevelGen : MonoBehaviour
     void PropogateEntropy(int x, int y)
     {
         // check to make sure x and y are in range of the grid array
-        if (x < 0 || x > levelX || y < 0 || y > levelY) return;
+        if (x < 0 || x > levelManager.levelX || y < 0 || y > levelManager.levelY) return;
 
         Debug.Log("Began propogation of tile at: (" + x.ToString() + ", " + y.ToString() + ")");
 
@@ -192,13 +186,13 @@ public class LevelGen : MonoBehaviour
             if (PropogateEntropyOfFace(tilePrototype, target, Directions.Left)) nextGeneration.Add(target);
         }
         // Front Side
-        if (y + 1 < levelY)
+        if (y + 1 < levelManager.levelY)
         {
             Vector2Int target = new Vector2Int(x, y + 1);
             if (PropogateEntropyOfFace(tilePrototype, target, Directions.Front)) nextGeneration.Add(target);
         }
         // Right Side
-        if  (x + 1 < levelX)
+        if  (x + 1 < levelManager.levelX)
         {
             Vector2Int target = new Vector2Int(x + 1, y);
             if (PropogateEntropyOfFace(tilePrototype, target, Directions.Right)) nextGeneration.Add(target);
@@ -222,6 +216,7 @@ public class LevelGen : MonoBehaviour
         }
     }
 
+    private enum Directions { Left, Front, Right, Back }
     bool PropogateEntropyOfFace(NeighborsList neighborsList, Vector2Int target, Directions direction)
     {
         // only propogate the changes in entopy to an undecided blank prefab, not a decided tile 🚫
@@ -256,6 +251,30 @@ public class LevelGen : MonoBehaviour
         }
     }
 
+    GameObject ChoosePrefabFromEntropy(int x, int y)
+    {
+        if (x < 0 || x > levelManager.levelX || y < 0 || y > levelManager.levelY || !Grid[x, y].CompareTag("Undecided")) return null;
+
+        List<GameObject> entropy = Grid[x, y].GetComponent<PossibilitySpace>().Entropy;
+        List<TilePrototype> tiles = new List<TilePrototype>();
+        foreach(GameObject option in entropy)
+        {
+            tiles.Add(option.GetComponent<TilePrototype>());
+        }
+
+        int percentageSum = 0;
+        foreach (TilePrototype option in tiles) percentageSum += option.probability;
+
+        int rand = Random.Range(0, percentageSum);
+        foreach (TilePrototype option in tiles)
+        {
+            rand -= option.probability;
+            if (rand <= 0) return option.neighborsList.Self;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Determines the blank tile with the lowest entropy from the adjacent tiles of the tile at (x, y)
     /// </summary>
@@ -273,7 +292,7 @@ public class LevelGen : MonoBehaviour
             int xOffset = i == 0 ? -1 : i == 2 ? 1 : 0;
             int yOffset = i == 1 ? 1 : i == 3 ? -1 : 0;
 
-            if (x + xOffset > -1 && x + xOffset < levelX && y + yOffset > -1 && y + yOffset < levelY)
+            if (x + xOffset > -1 && x + xOffset < levelManager.levelX && y + yOffset > -1 && y + yOffset < levelManager.levelY)
             {
                 if (Grid[x + xOffset, y + yOffset] != null)
                 {
@@ -294,8 +313,8 @@ public class LevelGen : MonoBehaviour
         {
             while (true)
             {
-                int randX = Random.Range(0, levelX);
-                int randY = Random.Range(0, levelY);
+                int randX = Random.Range(0, levelManager.levelX);
+                int randY = Random.Range(0, levelManager.levelY);
 
                 if (!Grid[randX, randY].CompareTag("Undecided")) continue;
 
@@ -303,7 +322,7 @@ public class LevelGen : MonoBehaviour
                 {
                     int xOffset = i == 0 ? -1 : i == 2 ? 1 : 0;
                     int yOffset = i == 1 ? 1 : i == 3 ? -1 : 0;
-                    if (randX + xOffset < 0 || randX + xOffset > levelX - 1 || randY + yOffset < 0 || randY + yOffset > levelY - 1) continue;
+                    if (randX + xOffset < 0 || randX + xOffset > levelManager.levelX - 1 || randY + yOffset < 0 || randY + yOffset > levelManager.levelY - 1) continue;
                     Debug.Log("🙃 (" + (randX + xOffset).ToString() + ", " + (randY + yOffset).ToString() + ")");
                     if (Grid[randX + xOffset, randY + yOffset].CompareTag("Undecided"))
                     {
@@ -371,8 +390,8 @@ public class LevelGen : MonoBehaviour
         }
 
         // Choose a random tile to start with
-        int randX = Random.Range(0, levelX);
-        int randY = Random.Range(0, levelY);
+        int randX = Random.Range(0, levelManager.levelX);
+        int randY = Random.Range(0, levelManager.levelY);
 
         PossibilitySpace randomTile = Grid[randX, randY].GetComponent<PossibilitySpace>();
         CovertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
@@ -387,7 +406,7 @@ public class LevelGen : MonoBehaviour
     /// </summary>
     void Step()
     {
-        if (LastTile.x < 0 || LastTile.x > levelX - 1 || LastTile.y < 0 || LastTile.y > levelY - 1) return;
+        if (LastTile.x < 0 || LastTile.x > levelManager.levelX - 1 || LastTile.y < 0 || LastTile.y > levelManager.levelY - 1) return;
         Vector2Int nextTileCoords = GetNextTileCoords(LastTile.x, LastTile.y);
 
         Debug.Log("Chose: " + nextTileCoords.ToString());
@@ -398,15 +417,19 @@ public class LevelGen : MonoBehaviour
             return;
         }
 
-        PossibilitySpace nextTileOptions = Grid[nextTileCoords.x, nextTileCoords.y].GetComponent<PossibilitySpace>();
-
-        CovertTile(nextTileCoords.x, nextTileCoords.y, nextTileOptions.Entropy[Random.Range(0, nextTileOptions.Entropy.Count)]);
+        GameObject prefab = ChoosePrefabFromEntropy(nextTileCoords.x, nextTileCoords.y);
+        if (prefab == null)
+        {
+            Debug.Log("Failed to retrieve tile from choices");
+            return;
+        }
+        CovertTile(nextTileCoords.x, nextTileCoords.y, prefab);
         PropogateEntropy(nextTileCoords.x, nextTileCoords.y);
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
 
-        for (int y = 0; y < levelY; y++)
+        for (int y = 0; y < levelManager.levelY; y++)
         {
-            for (int x = 0; x < levelX; x++)
+            for (int x = 0; x < levelManager.levelX; x++)
             {
                 if (!Grid[x, y].CompareTag("Undecided")) continue;
                 PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
@@ -444,9 +467,9 @@ public class LevelGen : MonoBehaviour
         {
             Step();
             complete = true;
-            for (int y = 0; y < levelY; y++)
+            for (int y = 0; y < levelManager.levelY; y++)
             {
-                for (int x = 0; x < levelX; x++)
+                for (int x = 0; x < levelManager.levelX; x++)
                 {
                     if (Grid[x, y].CompareTag("Undecided"))
                     {
@@ -460,29 +483,29 @@ public class LevelGen : MonoBehaviour
         bool valid = true;
         if (complete)
         {
-            NeighborsList[,] validationGrid = new NeighborsList[levelX, levelY];
-            for (int y = 0; y < levelY; y++)
+            NeighborsList[,] validationGrid = new NeighborsList[levelManager.levelX, levelManager.levelY];
+            for (int y = 0; y < levelManager.levelY; y++)
             {
-                for (int x = 0; x < levelX; x++)
+                for (int x = 0; x < levelManager.levelX; x++)
                 {
                     validationGrid[x, y] = Grid[x, y].GetComponent<TilePrototype>().neighborsList;
                 }
             }
 
-            for (int y = 0; y < levelY; y++)
+            for (int y = 0; y < levelManager.levelY; y++)
             {
-                for (int x = 0; x < levelX; x++)
+                for (int x = 0; x < levelManager.levelX; x++)
                 {
                     GameObject self = validationGrid[x, y].Self;
                     if (x - 1 > -1)
                     {
                         if (!validationGrid[x - 1, y].Right.neighbors.Contains(self)) valid = false;
                     }
-                    if (y + 1 < levelY)
+                    if (y + 1 < levelManager.levelY)
                     {
                         if (!validationGrid[x, y + 1].Back.neighbors.Contains(self)) valid = false;
                     }
-                    if (x + 1 < levelX)
+                    if (x + 1 < levelManager.levelX)
                     {
                         if (!validationGrid[x + 1, y].Left.neighbors.Contains(self)) valid = false;
                     }
@@ -498,6 +521,7 @@ public class LevelGen : MonoBehaviour
         if (valid)
         {
             generated = true;
+            levelManager.Mansion.Add(Grid);
         }
         else
         {
