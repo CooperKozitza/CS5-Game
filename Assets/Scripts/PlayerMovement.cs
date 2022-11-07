@@ -22,6 +22,16 @@ public class PlayerMovement : MonoBehaviour
     {
         RigidBody.AddForce(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized * speed);
 
+        if (Physics.Raycast(transform.position, Vector3.down, 1F))
+        {
+            onGround = true;
+            Debug.DrawRay(transform.position, Vector3.down, Color.yellow);
+        }
+        else
+        {
+            onGround = false;
+        }
+
         if (Input.GetButton("Jump") && onGround)
         {
             RigidBody.AddForce(new Vector3(0, floatiness, 0));
@@ -34,19 +44,21 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-           onGround = true;
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            onGround = false;
-        }
-    }
 }
+
+//    private void OnCollisionEnter(Collision collision)
+//    {
+//        if (collision.gameObject.CompareTag("Floor"))
+//        {
+//           onGround = true;
+//        }
+//    }
+
+//    private void OnCollisionExit(Collision collision)
+//    {
+//        if (collision.gameObject.CompareTag("Floor"))
+//        {
+//            onGround = false;
+//        }
+//    }
+//}

@@ -48,7 +48,7 @@ public class NavMeshMovement : MonoBehaviour
             else
             {
                 if (seePlayer) {
-                    goal = hit.point;
+                    //goal = hit.point;
                     seePlayer = false;
                 }
                 Debug.DrawRay(transform.position, rayDirection.normalized * hit.distance, Color.magenta);
