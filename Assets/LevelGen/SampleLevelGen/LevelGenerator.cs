@@ -118,8 +118,6 @@ public class LevelGenerator : MonoBehaviour
         // check to make sure x and y are in range of the grid array
         if (x < 0 || x > levelManager.levelX || y < 0 || y > levelManager.levelY) return;
 
-        Debug.Log("Began propogation of tile at: (" + x.ToString() + ", " + y.ToString() + ")");
-
         GameObject tile = Grid[x, y];
         NeighborsList tilePrototype;
 
@@ -329,7 +327,6 @@ public class LevelGenerator : MonoBehaviour
                     int xOffset = i == 0 ? -1 : i == 2 ? 1 : 0;
                     int yOffset = i == 1 ? 1 : i == 3 ? -1 : 0;
                     if (randX + xOffset < 0 || randX + xOffset > levelManager.levelX - 1 || randY + yOffset < 0 || randY + yOffset > levelManager.levelY - 1) continue;
-                    Debug.Log("🙃 (" + (randX + xOffset).ToString() + ", " + (randY + yOffset).ToString() + ")");
                     if (Grid[randX + xOffset, randY + yOffset].CompareTag("Undecided"))
                     {
                         PossibilitySpace validNeighborPossibilitySpace = Grid[randX + xOffset, randY + yOffset].GetComponent<PossibilitySpace>();
@@ -415,8 +412,6 @@ public class LevelGenerator : MonoBehaviour
         if (LastTile.x < 0 || LastTile.x > levelManager.levelX - 1 || LastTile.y < 0 || LastTile.y > levelManager.levelY - 1) return;
         Vector2Int nextTileCoords = GetNextTileCoords(LastTile.x, LastTile.y);
 
-        Debug.Log("Chose: " + nextTileCoords.ToString());
-
         if (!Grid[nextTileCoords.x, nextTileCoords.y].CompareTag("Undecided"))
         {
             Debug.Log("Tile selected by the GetNextTileCoords was not undecided");
@@ -453,7 +448,7 @@ public class LevelGenerator : MonoBehaviour
 
     [InspectorButton("Generate")]
     public bool generate = false;
-    void Generate()
+    public void Generate()
     {
         if (!generated)
         {
@@ -528,6 +523,7 @@ public class LevelGenerator : MonoBehaviour
         {
             generated = true;
             levelManager.Mansion.Add(Grid);
+            Debug.Log("Generation Success! Took: " + Time.deltaTime.ToString() + " seconds.");
         }
         else
         {

@@ -20,7 +20,7 @@ public class RoomManager : MonoBehaviour
     {
         while (true)
         {
-            Room room = FindRoom(0);
+            Room room = FindRoomOnFloor(0);
             if (room == null) break;
             else
             {
@@ -40,7 +40,7 @@ public class RoomManager : MonoBehaviour
     /// </summary>
     /// <param name="floor">The floor in which to search for a room</param>
     /// <returns></returns>
-    Room FindRoom(int floor)
+    Room FindRoomOnFloor(int floor)
     {
         Room room = new Room();
         GameObject[,] grid = levelManager.Mansion[floor];
