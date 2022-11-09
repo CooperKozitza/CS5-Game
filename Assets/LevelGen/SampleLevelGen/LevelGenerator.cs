@@ -5,7 +5,13 @@ using UnityEditor;
 
 public class LevelGenerator : MonoBehaviour
 {
-    LevelManager levelManager;
+    private LevelManager levelManager;
+    public GameObject levelManagerObj;
+
+    void Awake()
+    {
+        levelManager = levelManagerObj.GetComponent<LevelManager>();
+    }
 
     private bool generated = false;
 
