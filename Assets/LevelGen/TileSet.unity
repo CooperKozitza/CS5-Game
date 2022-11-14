@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corner - 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3721234003258309265, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -5221963080773851136, guid: 5914ae1d1c1c7a74c8ca35d16723a294, type: 3}
     - target: {fileID: 7575011679441297764, guid: 5fca4a43380a5954f91d21b9b67f40af, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -248,6 +252,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corner
       objectReference: {fileID: 0}
+    - target: {fileID: 3721234003258309265, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -5221963080773851136, guid: 5914ae1d1c1c7a74c8ca35d16723a294, type: 3}
     - target: {fileID: 7575011679441297764, guid: ebd09d4a8732a19489cb116a311ef34e, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -532,6 +540,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corner - 3
       objectReference: {fileID: 0}
+    - target: {fileID: 3721234003258309265, guid: bb9eba1ffa7ef374a9de6a456dfc48b2, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -5221963080773851136, guid: 5914ae1d1c1c7a74c8ca35d16723a294, type: 3}
     - target: {fileID: 7575011679441297764, guid: bb9eba1ffa7ef374a9de6a456dfc48b2, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -662,6 +674,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corner - 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3721234003258309265, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -5221963080773851136, guid: 5914ae1d1c1c7a74c8ca35d16723a294, type: 3}
     - target: {fileID: 7575011679441297764, guid: 3d02dbf125a4c31418ac7ea140163893, type: 3}
       propertyPath: m_RootOrder
       value: 5
