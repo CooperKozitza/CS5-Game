@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed;
     public float maxSpeed;
-    public float floatiness = 1.0f;
+    public float jumpForce = 1.0f;
 
     private Rigidbody RigidBody { get; set; }
     private bool onGround = false;
@@ -20,7 +20,8 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RigidBody.AddForce(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized * speed);
+        Vector3 movement = transform.TransformDirection(new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * speed);
+        RigidBody.velocity = new Vector3(movement.x, RigidBody.velocity.y, movement.z);
 
         if (Physics.Raycast(transform.position, Vector3.down, 1F))
         {
@@ -34,13 +35,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButton("Jump") && onGround)
         {
-            RigidBody.AddForce(new Vector3(0, floatiness, 0));
+            RigidBody.AddForce(new Vector3(0, jumpForce, 0));
         }
 
-        if (RigidBody.velocity.magnitude > maxSpeed)
-        {
-            RigidBody.velocity = RigidBody.velocity.normalized * maxSpeed;
-        }
+        //if (RigidBody.velocity.magnitude > maxSpeed)
+        //{
+        //    RigidBody.velocity = RigidBody.velocity.normalized * maxSpeed;
+        //}
 
     }
 
