@@ -9,7 +9,7 @@ public class PossibilitySpace : MonoBehaviour
     public List<GameObject> DefaultEntropy = new List<GameObject>();
     public List<GameObject> Entropy = new List<GameObject>();
     private Material material { get; set; }
-    public bool previouslyPropogated { get; set; }
+    public bool previouslyPropagated { get; set; }
 
     void Awake()
     {
