@@ -13,6 +13,8 @@ public class NavMeshMovement : MonoBehaviour
 
     public bool seePlayer;
 
+    public bool onGoal;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,7 +50,6 @@ public class NavMeshMovement : MonoBehaviour
             else
             {
                 if (seePlayer) {
-                    //goal = hit.point;
                     seePlayer = false;
                 }
                 Debug.DrawRay(transform.position, rayDirection.normalized * hit.distance, Color.magenta);
@@ -59,6 +60,11 @@ public class NavMeshMovement : MonoBehaviour
         if (Vector3.Distance(goal, transform.position) > 0.1f)
         {
             agent.destination = goal;
+            onGoal = false;
+
+        } else
+        {
+            onGoal = true;
         }
     }
 }
