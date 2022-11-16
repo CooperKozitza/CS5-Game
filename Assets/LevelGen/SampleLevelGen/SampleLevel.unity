@@ -200,7 +200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 114000794}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 10, y: 30, z: 10}
+  m_LocalPosition: {x: 23, y: 32, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -330,8 +330,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03a025b044b66a49b56054653a51090, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelX: 12
+  generator: {fileID: 1355415153}
+  levelX: 24
   levelY: 12
+  createNewLevel: 0
 --- !u!4 &742520452
 Transform:
   m_ObjectHideFlags: 0
@@ -437,7 +439,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f80f7eff4d02925438c3b28ed8b24c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelManagerObj: {fileID: 903995112}
+  levelManagerObj: {fileID: 742520450}
+  maxStrikes: 3
   emptyTile: {fileID: 1920910514974186063, guid: e9d71707f34e0ef4ab6b9d59ca3824df, type: 3}
   createGrid: 0
   destroyGrid: 0
