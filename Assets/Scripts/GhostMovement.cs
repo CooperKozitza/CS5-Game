@@ -8,22 +8,22 @@ public class GhostMovement : MonoBehaviour
     public float speed;
     public float floatiness = 1.0f;
 
-    private Rigidbody rigidBody { get; set; }
+    private Rigidbody RigidBody { get; set; }
     private bool onGround = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        RigidBody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        rigidBody.velocity = new Vector3(Input.GetAxis("Horizontal") * speed, rigidBody.velocity.y, Input.GetAxis("Vertical") * speed);
+        RigidBody.velocity = new Vector3(Input.GetAxis("Horizontal") * speed, RigidBody.velocity.y, Input.GetAxis("Vertical") * speed);
         if (Input.GetButton("Jump") && onGround)
         {
-            rigidBody.AddForce(new Vector3(0, floatiness, 0));
+            RigidBody.AddForce(new Vector3(0, floatiness, 0));
             onGround = false;
         }
     }
