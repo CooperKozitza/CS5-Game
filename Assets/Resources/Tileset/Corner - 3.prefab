@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4399838777820736240}
   - component: {fileID: 3721234003258309265}
   - component: {fileID: 8609307559170667795}
+  - component: {fileID: 4009005190737932759}
   m_Layer: 0
   m_Name: Corner - 3
   m_TagString: Untagged
@@ -101,6 +102,20 @@ MonoBehaviour:
   invariable: 0
   rotation: 3
   neighborsList: {fileID: 11400000, guid: 6f4e726b31cc60342af7051626503c00, type: 2}
+--- !u!64 &4009005190737932759
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920910514974186063}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5221963080773851136, guid: 5914ae1d1c1c7a74c8ca35d16723a294, type: 3}
 --- !u!1 &8695300262141152058
 GameObject:
   m_ObjectHideFlags: 0

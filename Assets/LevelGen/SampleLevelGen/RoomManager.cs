@@ -10,7 +10,7 @@ public class RoomManager : MonoBehaviour
     public GameObject seedTile;
     public int minTwoDoorSize = 20;
     public List<GameObject> preDoors = new List<GameObject>();
-    public Mesh doorMesh;
+    public List<GameObject> postDoors = new List<GameObject>();
 
     void Awake()
     {
@@ -147,8 +147,9 @@ public class RoomManager : MonoBehaviour
             if (target.x > 0 && target.x < levelManager.levelX - 1 && target.y > 0 && target.y < levelManager.levelY - 2)
             {
                 lastIndex = walls.IndexOf(target);
-                GameObject targetPrefab = levelManager.Mansion[0][target.x, target.y];
-                targetPrefab.GetComponent<MeshFilter>().mesh = doorMesh;
+                int postDoorIndex = preDoors.FindIndex(x => x.GetComponent<TilePrototype>().neighborsList.Self == levelManager.Mansion[0][target.x, target.y].GetComponent<TilePrototype>().neighborsList.Self);
+                Debug.Log(postDoorIndex.ToString());
+                levelManager.generator.GetComponent<LevelGenerator>().CovertTile(target.x, target.y, postDoors[postDoorIndex]);
             }
         }
         
