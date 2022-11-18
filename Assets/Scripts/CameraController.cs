@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
         rotation.x += Input.GetAxis("Mouse X") * sensitivity;
         rotation.y = rotation.y > 90 ? 90 : rotation.y < -90 ? -90 : rotation.y + Input.GetAxis("Mouse Y") * sensitivity;
         transform.localRotation = Quaternion.AngleAxis(rotation.x, Vector3.up) * Quaternion.AngleAxis(rotation.y, Vector3.left);
-        player.transform.localRotation = Quaternion.AngleAxis(rotation.x, Vector3.up) * Quaternion.AngleAxis(rotation.y, Vector3.left);
+        player.transform.localRotation = Quaternion.AngleAxis(rotation.x, Vector3.up);
     }
 }
 
