@@ -90,7 +90,7 @@ public class LevelGenerator : MonoBehaviour
     /// <param name="x">x position in the grid</param>
     /// <param name="y">y position in the grid</param>
     /// <param name="prefab">the prefab to convert to</param>
-    void CovertTile(int x, int y, GameObject prefab)
+    public void CovertTile(int x, int y, GameObject prefab)
     {
         TilePrototype proto = prefab.GetComponent<TilePrototype>();
         if (proto == null)

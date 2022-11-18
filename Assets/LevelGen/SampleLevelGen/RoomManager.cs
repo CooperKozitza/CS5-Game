@@ -8,6 +8,9 @@ public class RoomManager : MonoBehaviour
     public GameObject levelManagerObj;
 
     public GameObject seedTile;
+    public int minTwoDoorSize = 20;
+    public List<GameObject> preDoors = new List<GameObject>();
+    public Mesh doorMesh;
 
     void Awake()
     {
@@ -34,6 +37,7 @@ public class RoomManager : MonoBehaviour
 
         foreach (Room room in rooms)
         {
+            AddDoorToRoom(room);
             foreach (Vector2Int coord in room.tileCoords)
             {
                 levelManager.Mansion[0][coord.x, coord.y].name = rooms.IndexOf(room).ToString() + ": " + levelManager.Mansion[0][coord.x, coord.y].name;
@@ -113,28 +117,41 @@ public class RoomManager : MonoBehaviour
         {
             for (int i = nextGeneration.Count - 1; i > -1; i--)
             {
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Left.permeable)
-                {
-                    spread(nextGeneration[i], -1, 0);
-                }
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Front.permeable)
-                {
-                    spread(nextGeneration[i], 0, 1);
-                }
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Right.permeable)
-                {
-                    spread(nextGeneration[i], 1, 0);
-                }
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Back.permeable)
-                {
-                    spread(nextGeneration[i], 0, -1);
-                }
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Left.permeable) spread(nextGeneration[i], -1, 0);
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Front.permeable) spread(nextGeneration[i], 0, 1);
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Right.permeable) spread(nextGeneration[i], 1, 0);
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Back.permeable) spread(nextGeneration[i], 0, -1);
                 nextGeneration.RemoveAt(i);
             }
             Debug.Log("Spread Complete for generation, next gen count = " + nextGeneration.Count.ToString() + ", room tile count = " + room.tiles.Count.ToString());
             if (nextGeneration.Count == 0) break;
         }
         return room;
+    }
+
+    void AddDoorToRoom(Room room)
+    {
+        List<Vector2Int> walls = new List<Vector2Int>();
+        foreach (TilePrototype tile in room.tiles)
+        {
+            if (preDoors.Contains(tile.neighborsList.Self)) walls.Add(room.tileCoords[room.tiles.IndexOf(tile)]);
+        }
+
+        if(!walls.Exists(x => x.x > 0 && x.x < levelManager.levelX - 1 && x.y > 0 && x.y < levelManager.levelY - 2)) return;
+
+        int lastIndex = 0;
+        for (int i = 0; i < (room.tiles.Count > minTwoDoorSize ? 2 : 1); i++)
+        {
+            Vector2Int target = walls[Random.Range(0, walls.Count - (int)(lastIndex * 0.75)) + (int)(lastIndex * 0.75)];
+            
+            if (target.x > 0 && target.x < levelManager.levelX - 1 && target.y > 0 && target.y < levelManager.levelY - 2)
+            {
+                lastIndex = walls.IndexOf(target);
+                GameObject targetPrefab = levelManager.Mansion[0][target.x, target.y];
+                targetPrefab.GetComponent<MeshFilter>().mesh = doorMesh;
+            }
+        }
+        
     }
 }
 
