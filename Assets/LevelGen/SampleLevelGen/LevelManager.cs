@@ -21,6 +21,9 @@ public class LevelManager : MonoBehaviour
         {
             LevelGenerator levelGen = generator.GetComponent<LevelGenerator>();
             levelGen.Generate();
+
+            //Update NavMesh
+            
         }
     }
 }
