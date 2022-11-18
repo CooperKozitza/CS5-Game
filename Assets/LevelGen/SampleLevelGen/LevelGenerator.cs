@@ -104,6 +104,7 @@ public class LevelGenerator : MonoBehaviour
             Quaternion quaternion = new Quaternion();
             quaternion.eulerAngles = new Vector3(0, proto.rotation * 90, 0);
             Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), quaternion);
+            Grid[x, y].name = "(" + x.ToString() + ", " + y.ToString() + ")";
         }
         else
         {

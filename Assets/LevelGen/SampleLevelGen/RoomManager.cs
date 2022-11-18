@@ -7,6 +7,8 @@ public class RoomManager : MonoBehaviour
     private LevelManager levelManager;
     public GameObject levelManagerObj;
 
+    public GameObject seedTile;
+
     void Awake()
     {
         levelManager = levelManagerObj.GetComponent<LevelManager>();
@@ -22,6 +24,7 @@ public class RoomManager : MonoBehaviour
         {
             Room room = FindRoomOnFloor(0);
             if (room == null) break;
+            if (room.tiles.Count == 0) break;
             else
             {
                 foreach (TilePrototype tile in room.tiles) tile.room = room;
@@ -31,7 +34,10 @@ public class RoomManager : MonoBehaviour
 
         foreach (Room room in rooms)
         {
-            Debug.Log(room.tileCoords);
+            foreach (Vector2Int coord in room.tileCoords)
+            {
+                levelManager.Mansion[0][coord.x, coord.y].name = rooms.IndexOf(room).ToString() + ": " + levelManager.Mansion[0][coord.x, coord.y].name;
+            }
         }
     }
 
@@ -66,17 +72,21 @@ public class RoomManager : MonoBehaviour
             }
         }
 
-        while (true)
+        bool foundTile = false;
+        for (int y = 0; y < levelManager.levelY; y++)
         {
-            int randX = Random.Range(0, levelManager.levelX);
-            int randY = Random.Range(0, levelManager.levelY);
-
-            if (protoGrid[randX, randY].room == null)
+            for (int x = 0; x < levelManager.levelX; x++)
             {
-                Debug.Log("Found Roomless Tile, Starting...");
-                nextGeneration.Add(new Vector2Int(randX, randY));
-                break;
+                if (protoGrid[x, y].room == null && protoGrid[x, y].GetComponent<TilePrototype>().neighborsList.Self == seedTile)
+                {
+                    Debug.Log("Found Roomless Tile, Starting...");
+                    nextGeneration.Add(new Vector2Int(x, y));
+                    foundTile = true;
+                }
+                if (foundTile) break;
             }
+            if (foundTile) break;
+            if (y == levelManager.levelY - 1) return null;
         }
 
         void spread(Vector2Int tile, int xOffset, int yOffset)
@@ -84,7 +94,12 @@ public class RoomManager : MonoBehaviour
             if (tile.x + xOffset < levelManager.levelX && tile.x + xOffset > -1 && tile.y + yOffset < levelManager.levelY && tile.y + yOffset > -1)
             {
                 if (room.tiles.Contains(protoGrid[tile.x + xOffset, tile.y + yOffset])) return;
-                if (protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Right.permiable && !room.tiles.Contains(protoGrid[tile.x + xOffset, tile.y + yOffset]))
+                NeighborsList.Face face = xOffset == 1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Left :
+                    xOffset == -1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Right :
+                    yOffset == 1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Back :
+                    yOffset == -1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Front : null;
+
+                if (face.permeable && !room.tiles.Contains(protoGrid[tile.x + xOffset, tile.y + yOffset]))
                 {
                     Debug.Log("Spread");
                     room.tiles.Add(protoGrid[tile.x + xOffset, tile.y + yOffset]);
@@ -98,29 +113,27 @@ public class RoomManager : MonoBehaviour
         {
             for (int i = nextGeneration.Count - 1; i > -1; i--)
             {
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Left.permiable)
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Left.permeable)
                 {
                     spread(nextGeneration[i], -1, 0);
                 }
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Front.permiable)
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Front.permeable)
                 {
                     spread(nextGeneration[i], 0, 1);
                 }
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Right.permiable)
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Right.permeable)
                 {
                     spread(nextGeneration[i], 1, 0);
                 }
-                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Back.permiable)
+                if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Back.permeable)
                 {
                     spread(nextGeneration[i], 0, -1);
                 }
                 nextGeneration.RemoveAt(i);
-                Debug.Log("Spread Complete for generation, next gen count = " + nextGeneration.Count.ToString() + ", room tile count = " + room.tiles.Count.ToString());
-                if (nextGeneration.Count == 0) break;
             }
+            Debug.Log("Spread Complete for generation, next gen count = " + nextGeneration.Count.ToString() + ", room tile count = " + room.tiles.Count.ToString());
             if (nextGeneration.Count == 0) break;
         }
-
         return room;
     }
 }
