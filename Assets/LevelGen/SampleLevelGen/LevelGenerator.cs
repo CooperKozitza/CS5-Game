@@ -90,7 +90,7 @@ public class LevelGenerator : MonoBehaviour
     /// <param name="x">x position in the grid</param>
     /// <param name="y">y position in the grid</param>
     /// <param name="prefab">the prefab to convert to</param>
-    void CovertTile(int x, int y, GameObject prefab)
+    public void CovertTile(int x, int y, GameObject prefab)
     {
         TilePrototype proto = prefab.GetComponent<TilePrototype>();
         if (proto == null)
@@ -104,6 +104,7 @@ public class LevelGenerator : MonoBehaviour
             Quaternion quaternion = new Quaternion();
             quaternion.eulerAngles = new Vector3(0, proto.rotation * 90, 0);
             Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), quaternion);
+            Grid[x, y].name = "(" + x.ToString() + ", " + y.ToString() + ")";
         }
         else
         {

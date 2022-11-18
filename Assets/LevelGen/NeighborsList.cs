@@ -11,7 +11,7 @@ public class NeighborsList : ScriptableObject
     [Serializable]
     public class Face
     {
-        public bool permiable = false;
+        public bool permeable = false;
         public List<GameObject> neighbors = new List<GameObject>();
     }
 

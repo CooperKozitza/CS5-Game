@@ -379,6 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelManagerObj: {fileID: 742520450}
+  seedTile: {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
   setRooms: 0
 --- !u!4 &903995114
 Transform:
