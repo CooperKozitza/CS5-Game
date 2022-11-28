@@ -30,18 +30,29 @@ public class RoomManager : MonoBehaviour
             if (room.tiles.Count == 0) break;
             else
             {
-                foreach (TilePrototype tile in room.tiles) tile.room = room;
+                foreach (TilePrototype tile in room.tiles) tile.rooms.Add(room);
+                foreach (TilePrototype tile in room.sharedTiles) tile.rooms.Add(room);
                 rooms.Add(room);
             }
         } 
 
         foreach (Room room in rooms)
         {
-            AddDoorToRoom(room);
             foreach (Vector2Int coord in room.tileCoords)
             {
                 levelManager.Mansion[0][coord.x, coord.y].name = rooms.IndexOf(room).ToString() + ": " + levelManager.Mansion[0][coord.x, coord.y].name;
             }
+
+            foreach (TilePrototype tile in room.sharedTiles)
+            {
+                foreach (Room tileRoom in tile.rooms)
+                {
+                    if (!room.adjacentRooms.Contains(tileRoom)) room.adjacentRooms.Add(tileRoom);
+                }
+            }
+
+            if (room.adjacentRooms.Count >= (int)Room.Type.Hallway) room.roomType = Room.Type.Hallway; 
+            //AddDoorToRoom(room);
         }
     }
 
@@ -68,7 +79,7 @@ public class RoomManager : MonoBehaviour
         {
             for (int x = 0; x < levelManager.levelX; x++)
             {
-                if (protoGrid[x, y].room == null)
+                if (protoGrid[x, y].rooms.Count == 0)
                 {
                     break;
                 }
@@ -81,7 +92,7 @@ public class RoomManager : MonoBehaviour
         {
             for (int x = 0; x < levelManager.levelX; x++)
             {
-                if (protoGrid[x, y].room == null && protoGrid[x, y].GetComponent<TilePrototype>().neighborsList.Self == seedTile)
+                if (protoGrid[x, y].rooms.Count == 0 && protoGrid[x, y].GetComponent<TilePrototype>().neighborsList.Self == seedTile)
                 {
                     Debug.Log("Found Roomless Tile, Starting...");
                     nextGeneration.Add(new Vector2Int(x, y));
@@ -97,18 +108,28 @@ public class RoomManager : MonoBehaviour
         {
             if (tile.x + xOffset < levelManager.levelX && tile.x + xOffset > -1 && tile.y + yOffset < levelManager.levelY && tile.y + yOffset > -1)
             {
-                if (room.tiles.Contains(protoGrid[tile.x + xOffset, tile.y + yOffset])) return;
-                NeighborsList.Face face = xOffset == 1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Left :
-                    xOffset == -1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Right :
-                    yOffset == 1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Back :
-                    yOffset == -1 ? protoGrid[tile.x + xOffset, tile.y + yOffset].neighborsList.Front : null;
+                TilePrototype target = protoGrid[tile.x + xOffset, tile.y + yOffset];
 
-                if (face.permeable && !room.tiles.Contains(protoGrid[tile.x + xOffset, tile.y + yOffset]))
+                if (room.tiles.Contains(target)) return;
+                NeighborsList.Face face = xOffset == 1 ? target.neighborsList.Left :
+                    xOffset == -1 ? target.neighborsList.Right :
+                    yOffset == 1 ? target.neighborsList.Back :
+                    yOffset == -1 ? target.neighborsList.Front : null;
+
+                if (!room.tiles.Contains(target) || !room.sharedTiles.Contains(target))
                 {
-                    Debug.Log("Spread");
-                    room.tiles.Add(protoGrid[tile.x + xOffset, tile.y + yOffset]);
-                    room.tileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
-                    nextGeneration.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                    if (face.permeable)
+                    {
+                        Debug.Log("Spread");
+                        room.tiles.Add(target);
+                        room.tileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                        nextGeneration.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                    }
+                    else
+                    {
+                        room.sharedTiles.Add(target);
+                        room.sharedTileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                    }
                 }
             }
         }
@@ -131,36 +152,40 @@ public class RoomManager : MonoBehaviour
 
     void AddDoorToRoom(Room room)
     {
-        List<Vector2Int> walls = new List<Vector2Int>();
-        foreach (TilePrototype tile in room.tiles)
+        switch (room.roomType)
         {
-            if (preDoors.Contains(tile.neighborsList.Self)) walls.Add(room.tileCoords[room.tiles.IndexOf(tile)]);
-        }
-
-        if(!walls.Exists(x => x.x > 0 && x.x < levelManager.levelX - 1 && x.y > 0 && x.y < levelManager.levelY - 2)) return;
-
-        int lastIndex = 0;
-        for (int i = 0; i < (room.tiles.Count > minTwoDoorSize ? 2 : 1); i++)
-        {
-            Vector2Int target = walls[Random.Range(0, walls.Count - (int)(lastIndex * 0.75)) + (int)(lastIndex * 0.75)];
-            
-            if (target.x > 0 && target.x < levelManager.levelX - 1 && target.y > 0 && target.y < levelManager.levelY - 2)
+            case Room.Type.Hallway:
             {
-                lastIndex = walls.IndexOf(target);
-                int postDoorIndex = preDoors.FindIndex(x => x.GetComponent<TilePrototype>().neighborsList.Self == levelManager.Mansion[0][target.x, target.y].GetComponent<TilePrototype>().neighborsList.Self);
-                Debug.Log(postDoorIndex.ToString());
-                levelManager.generator.GetComponent<LevelGenerator>().CovertTile(target.x, target.y, postDoors[postDoorIndex]);
+                foreach (Room adjacentRoom in room.adjacentRooms)
+                {
+                    List<TilePrototype> possibleTiles = adjacentRoom.tiles.FindAll(x => x.rooms.Contains(room));
+                    possibleTiles[Random.Range(0, possibleTiles.Count)]
+                }
+                break;
+            }
+            default:
+            {
+
+                break;
             }
         }
-        
+    }
+
+    void GenerateDoorsOnFloor(int floor)
+    {
+
     }
 }
 
 public class Room
 {
-    public List<TilePrototype> tiles = new List<TilePrototype>();
-    public List<Vector2Int> tileCoords = new List<Vector2Int>();
-    public int adjacentRooms = 0;
+    public List<TilePrototype> tiles = new();
+    public List<TilePrototype> sharedTiles = new();
+
+    public List<Vector2Int> tileCoords = new();
+    public List<Vector2Int> sharedTileCoords = new();
+
+    public List<Room> adjacentRooms = new();
 
     public enum Type { Hallway = 5, Bedroom = 1, Library = 2 }
     public Type roomType { get; set; }
