@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    public GameObject generator;
+    public GameObject levelGenerator;
+    public GameObject roomManager;
     public int levelX, levelY;
     public List<GameObject[,]> Mansion { get; set; }
 
@@ -17,10 +18,14 @@ public class LevelManager : MonoBehaviour
     public bool createNewLevel = false;
     void CreateNewLevel()
     {
-        if (generator != null)
+        if (levelGenerator != null)
         {
-            LevelGenerator levelGen = generator.GetComponent<LevelGenerator>();
+            LevelGenerator levelGen = levelGenerator.GetComponent<LevelGenerator>();
             levelGen.Generate();
+        }
+        if (roomManager != null)
+        {
+            roomManager.GetComponent<RoomManager>().SetRooms();
         }
     }
 }

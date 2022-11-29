@@ -345,9 +345,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03a025b044b66a49b56054653a51090, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generator: {fileID: 1355415153}
+  levelGenerator: {fileID: 1355415153}
+  roomManager: {fileID: 903995112}
   levelX: 24
-  levelY: 12
+  levelY: 24
   createNewLevel: 0
 --- !u!4 &742520452
 Transform:

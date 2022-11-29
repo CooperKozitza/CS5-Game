@@ -21,7 +21,7 @@ public class RoomManager : MonoBehaviour
 
     [InspectorButton("SetRooms")]
     public bool setRooms = false;
-    void SetRooms()
+    public void SetRooms()
     {
         while (true)
         {
@@ -47,12 +47,20 @@ public class RoomManager : MonoBehaviour
             {
                 foreach (Room tileRoom in tile.rooms)
                 {
-                    if (!room.adjacentRooms.Contains(tileRoom)) room.adjacentRooms.Add(tileRoom);
+                    if (!room.adjacentRooms.Contains(tileRoom) && tileRoom != room) room.adjacentRooms.Add(tileRoom);
                 }
             }
 
-            if (room.adjacentRooms.Count >= (int)Room.Type.Hallway) room.roomType = Room.Type.Hallway; 
-            //AddDoorToRoom(room);
+            if (room.adjacentRooms.Count >= (int)Room.Type.Hallway) 
+            {
+                room.roomType = Room.Type.Hallway;
+                Debug.Log(rooms.IndexOf(room).ToString() + ": is a hallway");
+            }
+        }
+
+        foreach (Room room in rooms)
+        {
+            AddDoorToRoom(room);
         }
     }
 
@@ -124,11 +132,19 @@ public class RoomManager : MonoBehaviour
                         room.tiles.Add(target);
                         room.tileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
                         nextGeneration.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                        if (preDoors.Contains(target.neighborsList.Self) && !room.sharedTiles.Contains(target))
+                        {
+                            room.sharedTiles.Add(target);
+                            room.sharedTileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                        }
                     }
                     else
                     {
-                        room.sharedTiles.Add(target);
-                        room.sharedTileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                        if (preDoors.Contains(target.neighborsList.Self) && !room.sharedTiles.Contains(target))
+                        {
+                            room.sharedTiles.Add(target);
+                            room.sharedTileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
+                        }
                     }
                 }
             }
@@ -158,22 +174,42 @@ public class RoomManager : MonoBehaviour
             {
                 foreach (Room adjacentRoom in room.adjacentRooms)
                 {
-                    List<TilePrototype> possibleTiles = adjacentRoom.tiles.FindAll(x => x.rooms.Contains(room));
-                    possibleTiles[Random.Range(0, possibleTiles.Count)]
+                    List<TilePrototype> possibleTiles = adjacentRoom.sharedTiles.FindAll(x => x.rooms.Contains(room) && preDoors.Contains(x.neighborsList.Self));
+                    List<Vector2Int> possibleTileCoords = new();
+                    foreach (TilePrototype possibleTile in possibleTiles) possibleTileCoords.Add(adjacentRoom.sharedTileCoords[adjacentRoom.sharedTiles.IndexOf(possibleTile)]);
+                    if (possibleTiles.Count > 0 && (adjacentRoom.roomType == Room.Type.Hallway || adjacentRoom.doorCount < 2))
+                    {
+                        Vector2Int target = possibleTileCoords[Random.Range(0, possibleTileCoords.Count)];
+                        ConvertToDoor(target);
+                        adjacentRoom.doorCount++;
+                        room.doorCount++;
+                    }
                 }
                 break;
             }
             default:
             {
-
+                if (room.doorCount < (room.tiles.Count > minTwoDoorSize ? 2 : 1))
+                {
+                    Vector2Int target = room.sharedTileCoords[Random.Range(0, room.sharedTileCoords.Count)];
+                    if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target);
+                    room.doorCount++;
+                }
                 break;
             }
         }
     }
 
-    void GenerateDoorsOnFloor(int floor)
+    void ConvertToDoor(Vector2Int pos)
     {
+        TilePrototype preDoor = levelManager.Mansion[0][pos.x, pos.y].GetComponent<TilePrototype>();
+        GameObject postDoor = postDoors[preDoors.IndexOf(preDoor.neighborsList.Self)];
 
+        Destroy(levelManager.Mansion[0][pos.x, pos.y]);
+        Quaternion quaternion = new Quaternion();
+        quaternion.eulerAngles = new Vector3(0, postDoor.GetComponent<TilePrototype>().rotation * 90, 0);
+        levelManager.Mansion[0][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, 1, (levelManager.levelY - pos.y) * 2), quaternion);
+        levelManager.Mansion[0][pos.x, pos.y].name = "(" + pos.x.ToString() + ", " + pos.y.ToString() + ")";
     }
 }
 
@@ -186,6 +222,8 @@ public class Room
     public List<Vector2Int> sharedTileCoords = new();
 
     public List<Room> adjacentRooms = new();
+
+    public int doorCount = 0;
 
     public enum Type { Hallway = 5, Bedroom = 1, Library = 2 }
     public Type roomType { get; set; }

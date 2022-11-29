@@ -90,7 +90,7 @@ public class LevelGenerator : MonoBehaviour
     /// <param name="x">x position in the grid</param>
     /// <param name="y">y position in the grid</param>
     /// <param name="prefab">the prefab to convert to</param>
-    public void CovertTile(int x, int y, GameObject prefab)
+    public void ConvertTile(int x, int y, GameObject prefab)
     {
         TilePrototype proto = prefab.GetComponent<TilePrototype>();
         if (proto == null)
@@ -399,7 +399,7 @@ public class LevelGenerator : MonoBehaviour
         int randY = Random.Range(0, levelManager.levelY);
 
         PossibilitySpace randomTile = Grid[randX, randY].GetComponent<PossibilitySpace>();
-        CovertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
+        ConvertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
         PropagateEntropy(randX, randY);
         LastTile = new Vector2Int(randX, randY);
     }
@@ -427,7 +427,7 @@ public class LevelGenerator : MonoBehaviour
             Debug.Log("Failed to retrieve tile from choices");
             return;
         }
-        CovertTile(nextTileCoords.x, nextTileCoords.y, prefab);
+        ConvertTile(nextTileCoords.x, nextTileCoords.y, prefab);
         PropagateEntropy(nextTileCoords.x, nextTileCoords.y);
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
 
@@ -437,7 +437,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 if (!Grid[x, y].CompareTag("Undecided")) continue;
                 PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
-                if (possibilitySpace.Entropy.Count == 1) CovertTile(x, y, possibilitySpace.Entropy[0]);
+                if (possibilitySpace.Entropy.Count == 1) ConvertTile(x, y, possibilitySpace.Entropy[0]);
                 else if (possibilitySpace.Entropy.Count == 0)
                 {
                     if (strikes < maxStrikes)

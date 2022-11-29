@@ -12,7 +12,7 @@ public class TilePrototype : MonoBehaviour
     public bool invariable = false;
     [Range(0, 3)]
     public int rotation = 0;
-    public Room room;
+    public List<Room> rooms = new();
     public NeighborsList neighborsList;
 }
 
