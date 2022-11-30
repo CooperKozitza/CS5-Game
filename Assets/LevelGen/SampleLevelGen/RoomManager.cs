@@ -58,8 +58,15 @@ public class RoomManager : MonoBehaviour
             }
         }
 
+        List<Room> hallways = rooms.FindAll(x => x.roomType == Room.Type.Hallway);
+        foreach (Room room in hallways)
+        {
+            AddDoorToRoom(room);
+        }
+
         foreach (Room room in rooms)
         {
+            if (room.roomType == Room.Type.Hallway) continue;
             AddDoorToRoom(room);
         }
     }
@@ -179,8 +186,9 @@ public class RoomManager : MonoBehaviour
                     foreach (TilePrototype possibleTile in possibleTiles) possibleTileCoords.Add(adjacentRoom.sharedTileCoords[adjacentRoom.sharedTiles.IndexOf(possibleTile)]);
                     if (possibleTiles.Count > 0 && (adjacentRoom.roomType == Room.Type.Hallway || adjacentRoom.doorCount < 2))
                     {
-                        Vector2Int target = possibleTileCoords[Random.Range(0, possibleTileCoords.Count)];
+                        Vector2Int target = possibleTileCoords[possibleTileCoords.Count / 2];
                         ConvertToDoor(target);
+
                         adjacentRoom.doorCount++;
                         room.doorCount++;
                     }
@@ -189,9 +197,9 @@ public class RoomManager : MonoBehaviour
             }
             default:
             {
-                if (room.doorCount < (room.tiles.Count > minTwoDoorSize ? 2 : 1))
+                if (room.doorCount < (room.tiles.Count >= minTwoDoorSize ? 2 : 1))
                 {
-                    Vector2Int target = room.sharedTileCoords[Random.Range(0, room.sharedTileCoords.Count)];
+                    Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? room.sharedTileCoords.Count / 2 : Random.Range(0, room.sharedTileCoords.Count)];
                     if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target);
                     room.doorCount++;
                 }
@@ -202,10 +210,13 @@ public class RoomManager : MonoBehaviour
 
     void ConvertToDoor(Vector2Int pos)
     {
+        if (pos.x < 1 || pos.x > levelManager.levelX - 2 || pos.y < 1 || pos.y > levelManager.levelY - 2) return;
+
         TilePrototype preDoor = levelManager.Mansion[0][pos.x, pos.y].GetComponent<TilePrototype>();
         GameObject postDoor = postDoors[preDoors.IndexOf(preDoor.neighborsList.Self)];
 
         Destroy(levelManager.Mansion[0][pos.x, pos.y]);
+        
         Quaternion quaternion = new Quaternion();
         quaternion.eulerAngles = new Vector3(0, postDoor.GetComponent<TilePrototype>().rotation * 90, 0);
         levelManager.Mansion[0][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, 1, (levelManager.levelY - pos.y) * 2), quaternion);
@@ -225,6 +236,6 @@ public class Room
 
     public int doorCount = 0;
 
-    public enum Type { Hallway = 5, Bedroom = 1, Library = 2 }
+    public enum Type { Hallway = 6, Bedroom = 1, Library = 2 }
     public Type roomType { get; set; }
 }
