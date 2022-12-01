@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RoomManager : MonoBehaviour
 {
@@ -21,11 +23,11 @@ public class RoomManager : MonoBehaviour
 
     [InspectorButton("SetRooms")]
     public bool setRooms = false;
-    public void SetRooms()
+    public void SetRooms(int floor)
     {
         while (true)
         {
-            Room room = FindRoomOnFloor(0);
+            Room room = FindRoomOnFloor(floor);
             if (room == null) break;
             if (room.tiles.Count == 0) break;
             else
@@ -40,7 +42,7 @@ public class RoomManager : MonoBehaviour
         {
             foreach (Vector2Int coord in room.tileCoords)
             {
-                levelManager.Mansion[0][coord.x, coord.y].name = rooms.IndexOf(room).ToString() + ": " + levelManager.Mansion[0][coord.x, coord.y].name;
+                levelManager.Mansion[floor][coord.x, coord.y].name = rooms.IndexOf(room).ToString() + ": " + levelManager.Mansion[floor][coord.x, coord.y].name;
             }
 
             foreach (TilePrototype tile in room.sharedTiles)
@@ -54,20 +56,20 @@ public class RoomManager : MonoBehaviour
             if (room.adjacentRooms.Count >= (int)Room.Type.Hallway) 
             {
                 room.roomType = Room.Type.Hallway;
-                Debug.Log(rooms.IndexOf(room).ToString() + ": is a hallway");
+                Debug.Log("RM: " + rooms.IndexOf(room).ToString() + ": is a hallway");
             }
         }
 
         List<Room> hallways = rooms.FindAll(x => x.roomType == Room.Type.Hallway);
         foreach (Room room in hallways)
         {
-            AddDoorToRoom(room);
+            AddDoorToRoom(room, floor);
         }
 
         foreach (Room room in rooms)
         {
             if (room.roomType == Room.Type.Hallway) continue;
-            AddDoorToRoom(room);
+            AddDoorToRoom(room, floor);
         }
     }
 
@@ -109,7 +111,7 @@ public class RoomManager : MonoBehaviour
             {
                 if (protoGrid[x, y].rooms.Count == 0 && protoGrid[x, y].GetComponent<TilePrototype>().neighborsList.Self == seedTile)
                 {
-                    Debug.Log("Found Roomless Tile, Starting...");
+                    Debug.Log("RM: Found Roomless Tile, Starting...");
                     nextGeneration.Add(new Vector2Int(x, y));
                     foundTile = true;
                 }
@@ -135,7 +137,6 @@ public class RoomManager : MonoBehaviour
                 {
                     if (face.permeable)
                     {
-                        Debug.Log("Spread");
                         room.tiles.Add(target);
                         room.tileCoords.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
                         nextGeneration.Add(new Vector2Int(tile.x + xOffset, tile.y + yOffset));
@@ -167,13 +168,13 @@ public class RoomManager : MonoBehaviour
                 if (protoGrid[nextGeneration[i].x, nextGeneration[i].y].neighborsList.Back.permeable) spread(nextGeneration[i], 0, -1);
                 nextGeneration.RemoveAt(i);
             }
-            Debug.Log("Spread Complete for generation, next gen count = " + nextGeneration.Count.ToString() + ", room tile count = " + room.tiles.Count.ToString());
+            Debug.Log("RM: Spread Complete for generation, next gen count = " + nextGeneration.Count.ToString() + ", room tile count = " + room.tiles.Count.ToString());
             if (nextGeneration.Count == 0) break;
         }
         return room;
     }
 
-    void AddDoorToRoom(Room room)
+    void AddDoorToRoom(Room room, int floor)
     {
         switch (room.roomType)
         {
@@ -187,7 +188,7 @@ public class RoomManager : MonoBehaviour
                     if (possibleTiles.Count > 0 && (adjacentRoom.roomType == Room.Type.Hallway || adjacentRoom.doorCount < 2))
                     {
                         Vector2Int target = possibleTileCoords[possibleTileCoords.Count / 2];
-                        ConvertToDoor(target);
+                        ConvertToDoor(target, floor);
 
                         adjacentRoom.doorCount++;
                         room.doorCount++;
@@ -200,7 +201,7 @@ public class RoomManager : MonoBehaviour
                 if (room.doorCount < (room.tiles.Count >= minTwoDoorSize ? 2 : 1))
                 {
                     Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? room.sharedTileCoords.Count / 2 : Random.Range(0, room.sharedTileCoords.Count)];
-                    if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target);
+                    if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
                     room.doorCount++;
                 }
                 break;
@@ -208,19 +209,26 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    void ConvertToDoor(Vector2Int pos)
+    void ConvertToDoor(Vector2Int pos, int floor)
     {
         if (pos.x < 1 || pos.x > levelManager.levelX - 2 || pos.y < 1 || pos.y > levelManager.levelY - 2) return;
 
-        TilePrototype preDoor = levelManager.Mansion[0][pos.x, pos.y].GetComponent<TilePrototype>();
-        GameObject postDoor = postDoors[preDoors.IndexOf(preDoor.neighborsList.Self)];
+        TilePrototype preDoor = levelManager.Mansion[floor][pos.x, pos.y].GetComponent<TilePrototype>();
+        try
+        {
+            GameObject postDoor = postDoors[preDoors.IndexOf(preDoor.neighborsList.Self)];
 
-        Destroy(levelManager.Mansion[0][pos.x, pos.y]);
+            Destroy(levelManager.Mansion[floor][pos.x, pos.y]);
         
-        Quaternion quaternion = new Quaternion();
-        quaternion.eulerAngles = new Vector3(0, postDoor.GetComponent<TilePrototype>().rotation * 90, 0);
-        levelManager.Mansion[0][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, 1, (levelManager.levelY - pos.y) * 2), quaternion);
-        levelManager.Mansion[0][pos.x, pos.y].name = "(" + pos.x.ToString() + ", " + pos.y.ToString() + ")";
+            Quaternion quaternion = new Quaternion();
+            quaternion.eulerAngles = new Vector3(0, postDoor.GetComponent<TilePrototype>().rotation * 90, 0);
+            levelManager.Mansion[floor][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, floor * 2.8f, (levelManager.levelY - pos.y) * 2), quaternion);
+            levelManager.Mansion[floor][pos.x, pos.y].name = "(" + pos.x.ToString() + ", " + pos.y.ToString() + ")";
+        }
+        catch (Exception e)
+        {
+            Debug.Log("RM: Failed to find postDoor from preDoor. Exception: " + e.Message);
+        }
     }
 }
 

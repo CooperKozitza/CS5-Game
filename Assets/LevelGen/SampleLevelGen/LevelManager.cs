@@ -7,6 +7,8 @@ public class LevelManager : MonoBehaviour
     public GameObject levelGenerator;
     public GameObject roomManager;
     public int levelX, levelY;
+    [Range(0,5)]
+    public int floors;
     public List<GameObject[,]> Mansion { get; set; }
 
     void Start()
@@ -14,18 +16,26 @@ public class LevelManager : MonoBehaviour
         Mansion = new List<GameObject[,]>();
     }
 
-    [InspectorButton("CreateNewLevel")]
-    public bool createNewLevel = false;
-    void CreateNewLevel()
+    void CreateNewLevel(int floor)
     {
         if (levelGenerator != null)
         {
             LevelGenerator levelGen = levelGenerator.GetComponent<LevelGenerator>();
-            levelGen.Generate();
+            levelGen.Generate(floor);
         }
         if (roomManager != null)
         {
-            roomManager.GetComponent<RoomManager>().SetRooms();
+            roomManager.GetComponent<RoomManager>().SetRooms(floor);
+        }
+    }
+
+    [InspectorButton("CreateMansion")]
+    public bool createMansion = false;
+    void CreateMansion()
+    {
+        for (int i = 0; i < floors; i++)
+        {
+            CreateNewLevel(i);
         }
     }
 }

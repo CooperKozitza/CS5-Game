@@ -11,12 +11,12 @@ public class LevelGenerator : MonoBehaviour
     [Range(0, 5)]
     public int maxStrikes = 0;
 
+    private int workingFloor = 0;
+
     void Awake()
     {
         levelManager = levelManagerObj.GetComponent<LevelManager>();
     }
-
-    private bool generated = false;
 
     [Tooltip("The prefab used as a blank tile")]
     public GameObject emptyTile;
@@ -39,7 +39,7 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int x = 0; x < levelManager.levelX; x++)
             {
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, workingFloor * 2.8f, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
                 Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
             }
         }
@@ -95,7 +95,7 @@ public class LevelGenerator : MonoBehaviour
         TilePrototype proto = prefab.GetComponent<TilePrototype>();
         if (proto == null)
         {
-            Debug.Log("Attempted to covert tile to a non-tile gameObject :(");
+            Debug.Log("GEN: Attempted to covert tile to a non-tile gameObject :(");
         }
         if (x < -1 || x > levelManager.levelX - 1 || y < -1 || y > levelManager.levelY - 1) return;
         if (Grid[x, y] != null)
@@ -103,12 +103,12 @@ public class LevelGenerator : MonoBehaviour
             Destroy(Grid[x, y]);
             Quaternion quaternion = new Quaternion();
             quaternion.eulerAngles = new Vector3(0, proto.rotation * 90, 0);
-            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), quaternion);
+            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, workingFloor * 2.8f, (levelManager.levelY - y) * 2), quaternion);
             Grid[x, y].name = "(" + x.ToString() + ", " + y.ToString() + ")";
         }
         else
         {
-            Debug.Log(string.Concat("Failed to convert tile at ", x.ToString(), ", ", y.ToString()));
+            Debug.Log(string.Concat("GEN: Failed to convert tile at ", x.ToString(), ", ", y.ToString()));
         }
     }
 
@@ -133,14 +133,14 @@ public class LevelGenerator : MonoBehaviour
             PossibilitySpace blankTile = tile.GetComponent<PossibilitySpace>();
             if (blankTile.Entropy.Count == blankTile.DefaultEntropy.Count || blankTile.previouslyPropagated)
             {
-                Debug.Log("Stopped propagation of blank or previously propagated tile in superposition");
+                Debug.Log("GEN: Stopped propagation of blank or previously propagated tile in superposition");
                 return;
             }
 
             tilePrototype = (NeighborsList)ScriptableObject.CreateInstance("NeighborsList");
             if (tilePrototype == null)
             {
-                Debug.Log("Failed to create NeighborsList Instance");
+                Debug.Log("GEN: Failed to create NeighborsList Instance");
                 return;
             }
             blankTile.previouslyPropagated = true;
@@ -151,25 +151,25 @@ public class LevelGenerator : MonoBehaviour
                 // Left Side possibilities ⬅️
                 foreach (GameObject leftPossibility in possibilityPrototype.neighborsList.Left.neighbors)
                 {
-                    // Debug.Log("Added " + leftPossibility.name + " to left side of blank tile at: " + x.ToString() + ", " + y.ToString());
+                    // Debug.Log("GEN: Added " + leftPossibility.name + " to left side of blank tile at: " + x.ToString() + ", " + y.ToString());
                     if (!tilePrototype.Left.neighbors.Contains(leftPossibility)) tilePrototype.Left.neighbors.Add(leftPossibility);
                 }
                 // Front Side possibilities ⬆️
                 foreach (GameObject frontPossibility in possibilityPrototype.neighborsList.Front.neighbors)
                 {
-                    // Debug.Log("Added " + frontPossibility.name + " to front side of blank tile at: " + x.ToString() + y.ToString());
+                    // Debug.Log("GEN: Added " + frontPossibility.name + " to front side of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Front.neighbors.Contains(frontPossibility)) tilePrototype.Front.neighbors.Add(frontPossibility);
                 }
                 // Right Side possibilities ➡️
                 foreach (GameObject rightPossibility in possibilityPrototype.neighborsList.Right.neighbors)
                 {
-                    // Debug.Log("Added " + rightPossibility.name + " to right side of blank tile at: " + x.ToString() + y.ToString());
+                    // Debug.Log("GEN: Added " + rightPossibility.name + " to right side of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Right.neighbors.Contains(rightPossibility)) tilePrototype.Right.neighbors.Add(rightPossibility);
                 }
                 // Back Side possibilities ⬇️
                 foreach (GameObject backPossibility in possibilityPrototype.neighborsList.Back.neighbors)
                 {
-                    // Debug.Log("Added " + backPossibility.name + " to left back of blank tile at: " + x.ToString() + y.ToString());
+                    // Debug.Log("GEN: Added " + backPossibility.name + " to left back of blank tile at: " + x.ToString() + y.ToString());
                     if (!tilePrototype.Back.neighbors.Contains(backPossibility)) tilePrototype.Back.neighbors.Add(backPossibility);
                 }
             }
@@ -336,7 +336,7 @@ public class LevelGenerator : MonoBehaviour
             }
             if (!foundTile)
             {
-                Debug.Log("Attempted to find next tile in a completed level");
+                Debug.Log("GEN: Attempted to find next tile in a completed level");
             }
             return lowestEntropyCoords;
         }
@@ -363,7 +363,7 @@ public class LevelGenerator : MonoBehaviour
         }
         else if (options.Count < 1)
         {
-            Debug.Log("Failed to retrive next tile for tile at: " + new Vector2Int(lastX, lastY).ToString());
+            Debug.Log("GEN: Failed to retrive next tile for tile at: " + new Vector2Int(lastX, lastY).ToString());
             return new Vector2Int(lastX - 1, lastY);
         }
         else
@@ -417,14 +417,14 @@ public class LevelGenerator : MonoBehaviour
 
         if (!Grid[nextTileCoords.x, nextTileCoords.y].CompareTag("Undecided"))
         {
-            Debug.Log("Tile selected by the GetNextTileCoords was not undecided");
+            Debug.Log("GEN: Tile selected by the GetNextTileCoords was not undecided");
             return;
         }
 
         GameObject prefab = ChoosePrefabFromEntropy(nextTileCoords.x, nextTileCoords.y);
         if (prefab == null)
         {
-            Debug.Log("Failed to retrieve tile from choices");
+            Debug.Log("GEN: Failed to retrieve tile from choices");
             return;
         }
         ConvertTile(nextTileCoords.x, nextTileCoords.y, prefab);
@@ -444,7 +444,7 @@ public class LevelGenerator : MonoBehaviour
                     {
                         strikes++;
                         CreatePatch(levelManager.levelX * levelManager.levelY > 144 ? 2 : 1, new Vector2Int(x, y));
-                        Debug.Log("Generation Error Strike: " + strikes.ToString() + "/" + maxStrikes.ToString() + ", Generated Patch, Continuing...");
+                        Debug.Log("GEN: Generation Error Strike: " + strikes.ToString() + "/" + maxStrikes.ToString() + ", Generated Patch, Continuing...");
                     }
                     else
                     {
@@ -460,20 +460,12 @@ public class LevelGenerator : MonoBehaviour
 
     [InspectorButton("Generate")]
     public bool generate = false;
-    public void Generate()
+    public void Generate(int floor)
     {
-        if (!generated)
-        {
-            CreateGrid();
-            StartGeneration();
-        }
-        else
-        {
-            DestroyGrid();
-            CreateGrid();
-            StartGeneration();
-            generated = false;
-        }
+        workingFloor = floor;
+
+        CreateGrid();
+        StartGeneration();
 
         bool complete = false;
         while (!complete)
@@ -533,14 +525,13 @@ public class LevelGenerator : MonoBehaviour
         }
         if (valid)
         {
-            generated = true;
             levelManager.Mansion.Add(Grid);
-            Debug.Log("Generation Success! Took: " + Time.deltaTime.ToString() + " seconds.");
+            Debug.Log("GEN: Generation Success! Took: " + Time.deltaTime.ToString() + " seconds.");
         }
         else
         {
             DestroyGrid();
-            Generate();
+            Generate(floor);
         }
     }
 
@@ -555,7 +546,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 if (x < 0 || x > levelManager.levelX - 1 || y < 0 || y > levelManager.levelY - 1) continue;
                 Destroy(Grid[x, y]);
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, 1, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, workingFloor * 2.8f, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
             }
         }
         // propagates edges of the patch into it.
