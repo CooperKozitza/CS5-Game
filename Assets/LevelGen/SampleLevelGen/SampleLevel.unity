@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -348,8 +348,9 @@ MonoBehaviour:
   levelGenerator: {fileID: 1355415153}
   roomManager: {fileID: 903995112}
   levelX: 24
-  levelY: 24
-  createNewLevel: 0
+  levelY: 12
+  floors: 3
+  createMansion: 0
 --- !u!4 &742520452
 Transform:
   m_ObjectHideFlags: 0
@@ -438,6 +439,18 @@ PrefabInstance:
       propertyPath: m_UseGravity
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7145442369289120740, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7145442369289120740, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7145442369289120740, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7223367736918222389, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -480,6 +493,50 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7223367736918222389, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Range
+      value: 7.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5613208
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Color.g
+      value: 0.87610865
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_DrawHalo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Intensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_SpotAngle
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_InnerSpotAngle
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8079686007047601513, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: m_BounceIntensity
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
