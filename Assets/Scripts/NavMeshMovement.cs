@@ -43,7 +43,6 @@ public class NavMeshMovement : MonoBehaviour
             if (hit.transform.gameObject.CompareTag("Player"))
             {
                 goal = hit.transform.position;
-                Debug.Log("see player");
                 seePlayer = true;
                 Debug.DrawRay(transform.position, rayDirection.normalized * hit.distance, Color.yellow);
             }
@@ -59,7 +58,8 @@ public class NavMeshMovement : MonoBehaviour
 
         if (Vector3.Distance(goal, transform.position) > 0.1f)
         {
-            agent.destination = goal;
+            if (agent.isOnNavMesh)
+                agent.destination = goal;
             onGoal = false;
 
         } else
