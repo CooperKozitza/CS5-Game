@@ -66,11 +66,8 @@ public class RoomManager : MonoBehaviour
             AddDoorToRoom(room, floor);
         }
 
-        foreach (Room room in rooms)
-        {
-            if (room.roomType == Room.Type.Hallway) continue;
-            AddDoorToRoom(room, floor);
-        }
+        List<Room> doorlessRooms = rooms.FindAll(x => x.doorCount < 1);
+        foreach (Room room in doorlessRooms) AddDoorToRoom(room, floor);
     }
 
     /// <summary>
@@ -198,12 +195,9 @@ public class RoomManager : MonoBehaviour
             }
             default:
             {
-                if (room.doorCount < (room.tiles.Count >= minTwoDoorSize ? 2 : 1))
-                {
-                    Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? room.sharedTileCoords.Count / 2 : Random.Range(0, room.sharedTileCoords.Count)];
-                    if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
-                    room.doorCount++;
-                }
+                Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? 0 : room.sharedTileCoords.Count];
+                if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
+                room.doorCount++;
                 break;
             }
         }
