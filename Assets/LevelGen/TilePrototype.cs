@@ -14,6 +14,16 @@ public class TilePrototype : MonoBehaviour
     public int rotation = 0;
     public List<Room> rooms = new();
     public NeighborsList neighborsList;
+
+    public GameObject floor;
+
+    public void ChangeFloorMaterial(Material material)
+    {
+        if (floor != null)
+        {
+            floor.GetComponent<MeshRenderer>().material = material;
+        }
+    }
 }
 
 

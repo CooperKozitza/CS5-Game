@@ -6,9 +6,12 @@ public class LevelManager : MonoBehaviour
 {
     public GameObject levelGenerator;
     public GameObject roomManager;
+
     public int levelX, levelY;
+
     [Range(0,5)]
     public int floors;
+
     public List<GameObject[,]> Mansion { get; set; }
 
     void Start()
