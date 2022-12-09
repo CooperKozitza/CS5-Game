@@ -407,8 +407,8 @@ public class LevelGenerator : MonoBehaviour
 
     void StartGenerationWithSeed(Room seed)
     {
-        List<Vector2Int> seedCoords = (List<Vector2Int>)Enumerable.Concat(seed.tileCoords, seed.sharedTileCoords);
-		List<TilePrototype> seedTiles = (List<TilePrototype>)Enumerable.Concat(seed.tiles, seed.sharedTiles);
+        List<Vector2Int> seedCoords = Enumerable.Concat(seed.tileCoords, seed.sharedTileCoords).ToList();
+		List<TilePrototype> seedTiles = Enumerable.Concat(seed.tiles, seed.sharedTiles).ToList();
 
         // Reset Grid
         if (Grid == null) CreateGrid();

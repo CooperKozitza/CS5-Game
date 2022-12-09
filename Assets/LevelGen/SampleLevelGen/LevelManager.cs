@@ -4,28 +4,37 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    public GameObject levelGenerator;
-    public GameObject roomManager;
+    public GameObject levelGeneratorObj;
+    public GameObject roomManagerObj;
+
+    private LevelGenerator levelGenerator;
+    private RoomManager roomManager;
+
     public int levelX, levelY;
     [Range(0,5)]
     public int floors;
+
     public List<GameObject[,]> Mansion { get; set; }
+
+    private Room seed;
 
     void Start()
     {
         Mansion = new List<GameObject[,]>();
+        levelGenerator = levelGeneratorObj.GetComponent<LevelGenerator>();
+        roomManager = roomManagerObj.GetComponent<RoomManager>();
     }
 
     void CreateNewLevel(int floor)
     {
         if (levelGenerator != null)
         {
-            LevelGenerator levelGen = levelGenerator.GetComponent<LevelGenerator>();
-            levelGen.Generate(floor);
+            levelGenerator.Generate(floor, seed != null ? seed : null);
         }
         if (roomManager != null)
         {
-            roomManager.GetComponent<RoomManager>().SetRooms(floor);
+            roomManager.SetRooms(floor);
+            seed = roomManager.StairRoom;
         }
     }
 
