@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,6 +14,8 @@ public class RoomManager : MonoBehaviour
     public int minTwoDoorSize = 20;
     public List<GameObject> preDoors = new List<GameObject>();
     public List<GameObject> postDoors = new List<GameObject>();
+
+    public Material hallwayColor;
 
     void Awake()
     {
@@ -63,11 +66,17 @@ public class RoomManager : MonoBehaviour
         List<Room> hallways = rooms.FindAll(x => x.roomType == Room.Type.Hallway);
         foreach (Room room in hallways)
         {
+            foreach (TilePrototype tile in room.tiles) tile.ChangeFloorMaterial(hallwayColor);
             AddDoorToRoom(room, floor);
         }
 
         List<Room> doorlessRooms = rooms.FindAll(x => x.doorCount < 1);
         foreach (Room room in doorlessRooms) AddDoorToRoom(room, floor);
+
+        foreach (Room room in hallways)
+        {
+            foreach (TilePrototype tile in room.tiles) tile.ChangeFloorMaterial(hallwayColor);
+        }
     }
 
     /// <summary>
@@ -185,7 +194,7 @@ public class RoomManager : MonoBehaviour
                     if (possibleTiles.Count > 0 && (adjacentRoom.roomType == Room.Type.Hallway || adjacentRoom.doorCount < 2))
                     {
                         Vector2Int target = possibleTileCoords[possibleTileCoords.Count / 2];
-                        ConvertToDoor(target, floor);
+                        ConvertToDoor(target, floor, new List<Room>() { room, adjacentRoom });
 
                         adjacentRoom.doorCount++;
                         room.doorCount++;
@@ -195,15 +204,30 @@ public class RoomManager : MonoBehaviour
             }
             default:
             {
+<<<<<<< Updated upstream
                 Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? 0 : room.sharedTileCoords.Count];
                 if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
                 room.doorCount++;
+=======
+<<<<<<< HEAD
+                if (room.doorCount < (room.tiles.Count >= minTwoDoorSize ? 2 : 1))
+                {
+                    Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? room.sharedTileCoords.Count / 2 : Random.Range(0, room.sharedTileCoords.Count)];
+                    if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
+                    room.doorCount++;
+                }
+=======
+                Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? 0 : room.sharedTileCoords.Count];
+                if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor, room.sharedTiles[room.sharedTileCoords.IndexOf(target)].rooms);
+                room.doorCount++;
+>>>>>>> develop
+>>>>>>> Stashed changes
                 break;
             }
         }
     }
 
-    void ConvertToDoor(Vector2Int pos, int floor)
+    void ConvertToDoor(Vector2Int pos, int floor, List<Room> rooms)
     {
         if (pos.x < 1 || pos.x > levelManager.levelX - 2 || pos.y < 1 || pos.y > levelManager.levelY - 2) return;
 
@@ -218,6 +242,17 @@ public class RoomManager : MonoBehaviour
             quaternion.eulerAngles = new Vector3(0, postDoor.GetComponent<TilePrototype>().rotation * 90, 0);
             levelManager.Mansion[floor][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, floor * 2.8f, (levelManager.levelY - pos.y) * 2), quaternion);
             levelManager.Mansion[floor][pos.x, pos.y].name = "(" + pos.x.ToString() + ", " + pos.y.ToString() + ")";
+
+            foreach (Room room in rooms)
+            {
+                if (room.tiles.Contains(room.sharedTiles[room.sharedTileCoords.IndexOf(pos)]))
+                {
+                    room.tiles.Add(levelManager.Mansion[floor][pos.x, pos.y].GetComponent<TilePrototype>());
+                    room.tileCoords.Add(pos);
+                }
+                room.sharedTiles.Add(levelManager.Mansion[floor][pos.x, pos.y].GetComponent<TilePrototype>());
+                room.sharedTileCoords.Add(pos);
+            }
         }
         catch (Exception e)
         {
