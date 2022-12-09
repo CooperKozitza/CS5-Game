@@ -10,9 +10,15 @@ public class RoomManager : MonoBehaviour
     public GameObject levelManagerObj;
 
     public GameObject seedTile;
+
     public int minTwoDoorSize = 20;
-    public List<GameObject> preDoors = new List<GameObject>();
-    public List<GameObject> postDoors = new List<GameObject>();
+    public int maxStairRoomSize = 10;
+    public int minStairRoomSize = 2;
+
+    public List<GameObject> preDoors = new();
+    public List<GameObject> postDoors = new();
+
+    public Room StairRoom { get; set; }
 
     void Awake()
     {
@@ -23,8 +29,13 @@ public class RoomManager : MonoBehaviour
 
     [InspectorButton("SetRooms")]
     public bool setRooms = false;
+    /// <summary>
+    /// Builds rooms for the mansion from the given floor. The method determines the rooms' types and places doors.
+    /// </summary>
+    /// <param name="floor">The floor to set rooms on</param>
     public void SetRooms(int floor)
     {
+        // while possible, find a new room on the floor and add that room to the tiles of the room
         while (true)
         {
             Room room = FindRoomOnFloor(floor);
@@ -40,19 +51,23 @@ public class RoomManager : MonoBehaviour
 
         foreach (Room room in rooms)
         {
+            // add the rooms' index to the name of the tile
             foreach (Vector2Int coord in room.tileCoords)
             {
                 levelManager.Mansion[floor][coord.x, coord.y].name = rooms.IndexOf(room).ToString() + ": " + levelManager.Mansion[floor][coord.x, coord.y].name;
             }
 
+
             foreach (TilePrototype tile in room.sharedTiles)
             {
-                foreach (Room tileRoom in tile.rooms)
+                // determine which walls of adjacent rooms face the room, "adjacent tile"
+                foreach (Room roomTile in tile.rooms)
                 {
-                    if (!room.adjacentRooms.Contains(tileRoom) && tileRoom != room) room.adjacentRooms.Add(tileRoom);
+                    if (!room.adjacentRooms.Contains(roomTile) && roomTile != room) room.adjacentRooms.Add(roomTile);
                 }
             }
 
+            // determine room type
             if (room.adjacentRooms.Count >= (int)Room.Type.Hallway) 
             {
                 room.roomType = Room.Type.Hallway;
@@ -60,12 +75,17 @@ public class RoomManager : MonoBehaviour
             }
         }
 
+        // if no stair room exists, find one and set this.StairRoom to be it
+        if (StairRoom == null) StairRoom = FindStairRoom(floor);
+
+        // add doors to all the hallways
         List<Room> hallways = rooms.FindAll(x => x.roomType == Room.Type.Hallway);
         foreach (Room room in hallways)
         {
             AddDoorToRoom(room, floor);
         }
 
+        // if any room still doesnt have a door, add one.
         List<Room> doorlessRooms = rooms.FindAll(x => x.doorCount < 1);
         foreach (Room room in doorlessRooms) AddDoorToRoom(room, floor);
     }
@@ -195,9 +215,12 @@ public class RoomManager : MonoBehaviour
             }
             default:
             {
-                Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? 0 : room.sharedTileCoords.Count];
-                if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
-                room.doorCount++;
+                if (room.doorCount < (room.tiles.Count >= minTwoDoorSize ? 2 : 1))
+                {
+                    Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? room.sharedTileCoords.Count / 2 : Random.Range(0, room.sharedTileCoords.Count)];
+                    if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
+                    room.doorCount++;
+                }
                 break;
             }
         }
@@ -224,6 +247,31 @@ public class RoomManager : MonoBehaviour
             Debug.Log("RM: Failed to find postDoor from preDoor. Exception: " + e.Message);
         }
     }
+
+    Room FindStairRoom(int floor)
+    {
+        List<Room> possibleStairRooms = rooms.FindAll(x => x.roomType != Room.Type.Hallway && x.tiles.Count > minStairRoomSize && x.tiles.Count < maxStairRoomSize);
+        Room stairRoom = new();
+
+        int lowestAdjacentRooms = int.MaxValue;
+        foreach (Room room in possibleStairRooms)
+        {
+            if (room.adjacentRooms.Count < lowestAdjacentRooms)
+            {
+                lowestAdjacentRooms = room.adjacentRooms.Count;
+                stairRoom = room;
+            }
+        }
+
+        foreach (Vector2Int coord in stairRoom.tileCoords)
+        {
+            if (stairRoom.tiles[stairRoom.tileCoords.IndexOf(coord)].neighborsList.Self == seedTile)
+            {
+                Destroy(levelManager.Mansion[floor][coord.x, coord.y]);
+            }
+        }
+        return stairRoom;
+    }
 }
 
 public class Room
@@ -238,6 +286,6 @@ public class Room
 
     public int doorCount = 0;
 
-    public enum Type { Hallway = 6, Bedroom = 1, Library = 2 }
+    public enum Type { Hallway = 6, Bedroom = 1, Library = 2, Stair}
     public Type roomType { get; set; }
 }
