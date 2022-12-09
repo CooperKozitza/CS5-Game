@@ -19,6 +19,8 @@ public class RoomManager : MonoBehaviour
 
     public Material hallwayColor;
 
+    public Material hallwayColor;
+
     void Awake()
     {
         levelManager = levelManagerObj.GetComponent<LevelManager>();
@@ -208,10 +210,13 @@ public class RoomManager : MonoBehaviour
             {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? 0 : room.sharedTileCoords.Count];
                 if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
                 room.doorCount++;
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 <<<<<<< HEAD
@@ -227,6 +232,9 @@ public class RoomManager : MonoBehaviour
                 room.doorCount++;
 >>>>>>> develop
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -251,7 +259,10 @@ public class RoomManager : MonoBehaviour
             levelManager.Mansion[floor][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, floor * 2.8f, (levelManager.levelY - pos.y) * 2), quaternion);
             levelManager.Mansion[floor][pos.x, pos.y].name = "(" + pos.x.ToString() + ", " + pos.y.ToString() + ")";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
             foreach (Room room in rooms)
             {
