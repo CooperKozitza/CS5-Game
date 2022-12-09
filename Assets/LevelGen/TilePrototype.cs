@@ -14,8 +14,6 @@ public class TilePrototype : MonoBehaviour
     public int rotation = 0;
     public List<Room> rooms = new();
     public NeighborsList neighborsList;
-
-    private Material material;
 }
 
 

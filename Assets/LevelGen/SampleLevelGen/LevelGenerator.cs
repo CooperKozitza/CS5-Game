@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System.Linq;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -364,7 +363,7 @@ public class LevelGenerator : MonoBehaviour
         }
         else if (options.Count < 1)
         {
-            Debug.Log("GEN: Failed to retrieve next tile for tile at: " + new Vector2Int(lastX, lastY).ToString());
+            Debug.Log("GEN: Failed to retrive next tile for tile at: " + new Vector2Int(lastX, lastY).ToString());
             return new Vector2Int(lastX - 1, lastY);
         }
         else
@@ -403,53 +402,6 @@ public class LevelGenerator : MonoBehaviour
         ConvertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
         PropagateEntropy(randX, randY);
         LastTile = new Vector2Int(randX, randY);
-    }
-
-    void StartGenerationWithSeed(Room seed)
-    {
-        List<Vector2Int> seedCoords = (List<Vector2Int>)Enumerable.Concat(seed.tileCoords, seed.sharedTileCoords);
-		List<TilePrototype> seedTiles = (List<TilePrototype>)Enumerable.Concat(seed.tiles, seed.sharedTiles);
-
-        // Reset Grid
-        if (Grid == null) CreateGrid();
-        foreach (GameObject tile in Grid)
-        {
-            if (!tile.CompareTag("Undecided"))
-            {
-                DestroyGrid();
-                CreateGrid();
-            }
-        }
-
-        if (seedCoords.Count != seedTiles.Count)
-        {
-            Debug.Log("GEN: failed to start generation with seed");
-            return;
-        }
-
-        List<Vector2Int> seededPossibilitySpaces = new();
-        foreach (Vector2Int coord in seedCoords)
-        {
-            if (coord.x > -1 && coord.x < levelManager.levelX && coord.y > -1 && coord.y < levelManager.levelY)
-            {
-                if (Grid[coord.x, coord.y].CompareTag("Undecided"))
-                {
-                    PossibilitySpace possibilitySpace = Grid[coord.x, coord.y].GetComponent<PossibilitySpace>();
-                    possibilitySpace.Entropy.RemoveAll(x => x != seedTiles[seedCoords.IndexOf(coord)].neighborsList.Self);
-                    seededPossibilitySpaces.Add(coord);
-                }
-				else 
-				{
-					Debug.Log("GEN: failed to start generation with seed");
-            		return;
-				}
-            }
-        }
-        foreach (Vector2Int coord in seededPossibilitySpaces)
-        {
-            PropagateEntropy(coord.x, coord.y);
-        }
-        LastTile = seededPossibilitySpaces[seededPossibilitySpaces.Count - 1];
     }
 
     private int strikes = 0;
@@ -508,14 +460,12 @@ public class LevelGenerator : MonoBehaviour
 
     [InspectorButton("Generate")]
     public bool generate = false;
-    public void Generate(int floor, Room seed = null)
+    public void Generate(int floor)
     {
         workingFloor = floor;
 
         CreateGrid();
-		
-		if (seed != null) StartGenerationWithSeed(seed);
-        else StartGeneration();
+        StartGeneration();
 
         bool complete = false;
         while (!complete)
