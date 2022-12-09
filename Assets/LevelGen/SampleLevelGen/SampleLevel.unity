@@ -278,26 +278,7 @@ Transform:
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
   m_Father: {fileID: 0}
-  m_RootOrder: 3
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-  m_Father: {fileID: 2036628312}
-  m_RootOrder: 2
-=======
-  m_Father: {fileID: 0}
   m_RootOrder: 4
->>>>>>> develop
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &114000798
 MonoBehaviour:
@@ -439,23 +420,8 @@ MonoBehaviour:
   levelGenerator: {fileID: 1355415153}
   roomManager: {fileID: 903995112}
   levelX: 24
-<<<<<<< HEAD
-  levelY: 12
-<<<<<<< Updated upstream
-  floors: 3
-=======
-  floors: 2
-=======
   levelY: 24
   floors: 1
->>>>>>> develop
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   createMansion: 0
 --- !u!4 &742520452
 Transform:
@@ -471,11 +437,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &822387348
 GameObject:
@@ -555,22 +516,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelManagerObj: {fileID: 742520450}
   seedTile: {fileID: 1920910514974186063, guid: bdf1ddb8373f5b04891d71dd3defc040, type: 3}
-<<<<<<< HEAD
-  minTwoDoorSize: 12
-<<<<<<< Updated upstream
-=======
-  maxStairRoomSize: 10
-  minStairRoomSize: 2
-=======
   minTwoDoorSize: 2
->>>>>>> develop
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   preDoors:
   - {fileID: 1920910514974186063, guid: ef4982dae6252ec42b3f2eda0421733c, type: 3}
   - {fileID: 1920910514974186063, guid: b127c59a228f5834f9d9de66e782e6e4, type: 3}
@@ -634,7 +580,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7223367736918222389, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7223367736918222389, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -642,27 +588,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7223367736918222389, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_LocalPosition.y
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      value: 3
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-      value: 1
-=======
       value: 2
->>>>>>> develop
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
       objectReference: {fileID: 0}
     - target: {fileID: 7223367736918222389, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -776,7 +702,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1355415156
 MonoBehaviour:
@@ -906,226 +832,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< Updated upstream
-=======
---- !u!114 &1355415156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355415153}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f80f7eff4d02925438c3b28ed8b24c48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelManagerObj: {fileID: 742520450}
-  maxStrikes: 3
-  emptyTile: {fileID: 1920910514974186063, guid: e9d71707f34e0ef4ab6b9d59ca3824df, type: 3}
-  createGrid: 0
-  destroyGrid: 0
-  startGeneration: 0
-  step: 0
-  generate: 0
---- !u!1 &1721224437
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1721224439}
-  - component: {fileID: 1721224438}
-  m_Layer: 0
-  m_Name: NavMesh Baker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1721224438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721224437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57b8d4879ead6483999747d919853d45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NavMeshSurface: {fileID: 1964455525}
-  bake: 0
---- !u!4 &1721224439
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721224437}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.359441, y: -4.9321055, z: 34.051212}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1964455524
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1964455526}
-  - component: {fileID: 1964455525}
-  m_Layer: 0
-  m_Name: NavMesh Surface
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1964455525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1964455524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-<<<<<<< Updated upstream
-=======
-  levelManagerObj: {fileID: 742520450}
-  maxStrikes: 3
-  emptyTile: {fileID: 1920910514974186063, guid: e9d71707f34e0ef4ab6b9d59ca3824df, type: 3}
-  createGrid: 0
-  destroyGrid: 0
-  startGeneration: 0
-  step: 0
-  generate: 0
---- !u!1 &1721224437
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1721224439}
-  - component: {fileID: 1721224438}
-  m_Layer: 0
-  m_Name: NavMesh Baker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1721224438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721224437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57b8d4879ead6483999747d919853d45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NavMeshSurface: {fileID: 1964455525}
-  bake: 0
---- !u!4 &1721224439
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721224437}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.359441, y: -4.9321055, z: 34.051212}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1964455524
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1964455526}
-  - component: {fileID: 1964455525}
-  m_Layer: 0
-  m_Name: NavMesh Surface
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1964455525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1964455524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
->>>>>>> Stashed changes
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 55
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.1
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 590cc0cbe70d648ae9212204404a70d0, type: 2}
-  m_BuildHeightMesh: 0
---- !u!4 &1964455526
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1964455524}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 --- !u!1 &2036628308 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 863304757549601924, guid: 28317283837954ce4b9119085c4f361c, type: 3}
