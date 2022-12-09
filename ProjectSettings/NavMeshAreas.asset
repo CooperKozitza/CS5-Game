@@ -83,6 +83,9 @@ NavMeshProjectSettings:
 =======
     agentHeight: 1.25
 >>>>>>> develop
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     agentSlope: 45
     agentClimb: 0.75

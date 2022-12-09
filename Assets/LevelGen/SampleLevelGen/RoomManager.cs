@@ -17,6 +17,8 @@ public class RoomManager : MonoBehaviour
 
     public Material hallwayColor;
 
+    public Material hallwayColor;
+
     void Awake()
     {
         levelManager = levelManagerObj.GetComponent<LevelManager>();
@@ -205,10 +207,13 @@ public class RoomManager : MonoBehaviour
             default:
             {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 Vector2Int target = room.sharedTileCoords[room.doorCount < 1 ? 0 : room.sharedTileCoords.Count];
                 if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor);
                 room.doorCount++;
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
                 if (room.doorCount < (room.tiles.Count >= minTwoDoorSize ? 2 : 1))
                 {
@@ -221,6 +226,9 @@ public class RoomManager : MonoBehaviour
                 if (target.x > 0 && target.x < levelManager.levelX + 1 && target.y > 0 && target.y < levelManager.levelY + 1) ConvertToDoor(target, floor, room.sharedTiles[room.sharedTileCoords.IndexOf(target)].rooms);
                 room.doorCount++;
 >>>>>>> develop
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                 break;
             }
@@ -242,6 +250,26 @@ public class RoomManager : MonoBehaviour
             quaternion.eulerAngles = new Vector3(0, postDoor.GetComponent<TilePrototype>().rotation * 90, 0);
             levelManager.Mansion[floor][pos.x, pos.y] = Instantiate(postDoor, new Vector3(pos.x * 2, floor * 2.8f, (levelManager.levelY - pos.y) * 2), quaternion);
             levelManager.Mansion[floor][pos.x, pos.y].name = "(" + pos.x.ToString() + ", " + pos.y.ToString() + ")";
+<<<<<<< Updated upstream
+=======
+
+            foreach (Room room in rooms)
+            {
+                if (room.tiles.Contains(room.sharedTiles[room.sharedTileCoords.IndexOf(pos)]))
+                {
+                    room.tiles.Add(levelManager.Mansion[floor][pos.x, pos.y].GetComponent<TilePrototype>());
+                    room.tileCoords.Add(pos);
+                }
+                room.sharedTiles.Add(levelManager.Mansion[floor][pos.x, pos.y].GetComponent<TilePrototype>());
+                room.sharedTileCoords.Add(pos);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log("RM: Failed to find postDoor from preDoor. Exception: " + e.Message);
+        }
+    }
+>>>>>>> Stashed changes
 
             foreach (Room room in rooms)
             {
