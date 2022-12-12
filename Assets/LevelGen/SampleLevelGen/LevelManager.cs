@@ -11,6 +11,10 @@ public class LevelManager : MonoBehaviour
     public int floors;
     public List<GameObject[,]> Mansion { get; set; }
 
+    public int ghostCount;
+    public GameObject ghostPrefab;
+    public float tileSize = 2;
+
     void Start()
     {
         Mansion = new List<GameObject[,]>();
@@ -36,6 +40,15 @@ public class LevelManager : MonoBehaviour
         for (int i = 0; i < floors; i++)
         {
             CreateNewLevel(i);
+            SpawnGhosts(ghostCount);
         }
     }
+
+    void SpawnGhosts(int ghostCount) {
+        for (int i = 0; i < ghostCount; i++)
+        {
+            Instantiate(ghostPrefab, new Vector3(Random.Range(0, levelX) * tileSize, 1, Random.Range(0, levelY) * tileSize), Quaternion.identity);
+        }
+    }
+
 }
