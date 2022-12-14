@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -410,7 +410,7 @@ MonoBehaviour:
   roomManagerObj: {fileID: 903995112}
   levelX: 24
   levelY: 12
-  floors: 2
+  floors: 4
   createMansion: 0
 --- !u!4 &742520452
 Transform:
@@ -757,7 +757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelManagerObj: {fileID: 742520450}
-  maxStrikes: 3
+  maxStrikes: 5
   emptyTile: {fileID: 1920910514974186063, guid: e9d71707f34e0ef4ab6b9d59ca3824df, type: 3}
   createGrid: 0
   destroyGrid: 0

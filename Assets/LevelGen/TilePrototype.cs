@@ -16,6 +16,12 @@ public class TilePrototype : MonoBehaviour
     public NeighborsList neighborsList;
 
     private Material material;
+
+    void OnGizmosDraw()
+    {
+        Gizmos.color = new Color(rooms.FindAll(x => x.roomType == Room.Type.Hallway).Count > 0 ? 1 : 0, 0, 0, 0.5f);
+        Gizmos.DrawCube(transform.position, new Vector3(2, 0.5f, 2));
+    }
 }
 
 
