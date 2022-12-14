@@ -1049,21 +1049,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 863304757549601924, guid: 28317283837954ce4b9119085c4f361c, type: 3}
   m_PrefabInstance: {fileID: 273392386}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &837768322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 837768321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 362b83595074143168b475b78c641b37, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  maxSpeed: 5
-  jumpForce: 10
 --- !u!54 &837768324
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1080,23 +1065,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &837768326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 837768321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79a60c7b734814f819e968492c03ad98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  points: 0
-  health: 0
-  maxHealth: 10
-  text: {fileID: 0}
-  healthbar: {fileID: 0}
 --- !u!1 &968530782
 GameObject:
   m_ObjectHideFlags: 0
