@@ -26,6 +26,7 @@ public class PickupScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CheckPickup();
         
     }
 
@@ -47,6 +48,14 @@ public class PickupScript : MonoBehaviour
                 other.gameObject.SetActive(false);
             }
         }
+    }
+
+    private void CheckPickup()
+    {
+        float length = 4;
+        Vector3 rayDirection = transform.forward;
+        Physics.Raycast(transform.position, rayDirection.normalized, length);
+        UnityEngine.Debug.DrawRay(transform.position, rayDirection.normalized * length, Color.black);
     }
 
     private string GetDebuggerDisplay()
