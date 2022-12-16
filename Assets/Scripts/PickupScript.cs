@@ -14,8 +14,12 @@ public class PickupScript : MonoBehaviour
     public int maxHealth = 10;
     public TextMeshProUGUI text;
     public Scrollbar healthbar;
+    public Material startColor;
+    public Material selectColor;
+    public GameObject cam;
+    public GameObject[] pickups;
 
-    // Start is called before the first frame update
+// Start is called before the first frame update
     void Start()
     {
         health = maxHealth;
@@ -37,10 +41,10 @@ public class PickupScript : MonoBehaviour
             //Debug.Log("trigger");
             if (other.GetComponent<AddAttribute>().good)
             {
-                points++;
-                //Debug.Log("You have " + points + " points.");
-                text.text = points.ToString();
-                other.gameObject.SetActive(false);
+                //points++;
+                ////Debug.Log("You have " + points + " points.");
+                //text.text = points.ToString();
+                //other.gameObject.SetActive(false);
             } else
             {
                 health--;
@@ -53,8 +57,36 @@ public class PickupScript : MonoBehaviour
     private void CheckPickup()
     {
         float length = 4;
-        Vector3 rayDirection = transform.forward;
-        Physics.Raycast(transform.position, rayDirection.normalized, length);
+        RaycastHit hit;
+        Vector3 rayDirection = cam.transform.forward;
+
+        if(Physics.Raycast(transform.position, rayDirection.normalized, out hit, length)) {
+            GameObject pickup = hit.transform.gameObject;
+            if (pickup.CompareTag("Pickup") && pickup.GetComponent<AddAttribute>().good)
+            {
+                pickup.GetComponent<AddAttribute>().selected = true;
+                hit.transform.GetChild(0).GetComponent<MeshRenderer>().material = selectColor;
+                if (Input.GetKey(KeyCode.E)) {
+                    points++;
+                    //Debug.Log("You have " + points + " points.");
+                    text.text = points.ToString();
+                    pickup.SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            pickups = GameObject.FindGameObjectsWithTag("Pickup");
+            foreach (GameObject pickup in pickups)
+            {
+                if (pickup.GetComponent<AddAttribute>().good == true)
+                {
+                    pickup.GetComponent<AddAttribute>().selected = false;
+                    pickup.GetComponentInChildren<MeshRenderer>().material = startColor;
+                }
+            }
+        }
+
         UnityEngine.Debug.DrawRay(transform.position, rayDirection.normalized * length, Color.black);
     }
 

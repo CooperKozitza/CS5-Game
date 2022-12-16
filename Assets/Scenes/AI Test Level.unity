@@ -267,6 +267,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8056050781943830793, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: cam
+      value: 
+      objectReference: {fileID: 704330141}
+    - target: {fileID: 8056050781943830793, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: text
       value: 
       objectReference: {fileID: 1104554502}
@@ -274,6 +278,14 @@ PrefabInstance:
       propertyPath: healthbar
       value: 
       objectReference: {fileID: 1112713302}
+    - target: {fileID: 8056050781943830793, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: startColor
+      value: 
+      objectReference: {fileID: 2100000, guid: 64e09ce58c5294691bef83ce19e489bc, type: 2}
+    - target: {fileID: 8056050781943830793, guid: 28317283837954ce4b9119085c4f361c, type: 3}
+      propertyPath: selectColor
+      value: 
+      objectReference: {fileID: 2100000, guid: d0cc16427eb0045cfb0b244fff1cb576, type: 2}
     - target: {fileID: 9129039523346014850, guid: 28317283837954ce4b9119085c4f361c, type: 3}
       propertyPath: m_IsActive
       value: 0

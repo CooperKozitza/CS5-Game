@@ -5,4 +5,5 @@ using UnityEngine;
 public class AddAttribute : MonoBehaviour
 {
     public bool good;
+    public bool selected = false;
 }
