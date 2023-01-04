@@ -101,7 +101,6 @@ MonoBehaviour:
   invariable: 0
   rotation: 2
   neighborsList: {fileID: 11400000, guid: a1dbeef19c1120d4ba4def63d0b3cd03, type: 2}
-  floor: {fileID: 8364615902671317136}
 --- !u!1 &8364615902671317136
 GameObject:
   m_ObjectHideFlags: 0

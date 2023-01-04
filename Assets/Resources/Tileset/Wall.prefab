@@ -102,7 +102,6 @@ MonoBehaviour:
   invariable: 0
   rotation: 0
   neighborsList: {fileID: 11400000, guid: 3ee6c9bfee60916478129481d10a791b, type: 2}
-  floor: {fileID: 5310542892620054957}
 --- !u!64 &-5435559281043108907
 MeshCollider:
   m_ObjectHideFlags: 0
