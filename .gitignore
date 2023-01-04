@@ -9,7 +9,6 @@
 **/[Bb]uilds/**
 **/[Ll]ogs/**
 **/[Mm]emoryCaptures/**
-**/[Pp]rojectSettings/projectVersion.txt
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 [Aa]ssets/AssetStoreTools*
@@ -63,3 +62,4 @@ Thumbs.db.meta
 # VS Code
 *.vscode
 .fake
+ProjectSettings/ProjectVersion.txt
