@@ -8,39 +8,32 @@ public class LevelGenerator : MonoBehaviour
     private LevelManager levelManager;
     public GameObject levelManagerObj;
 
-    [Range(0, 5)]
+    [Range(0, 10)]
     public int maxStrikes = 0;
-
-    private int workingFloor = 0;
 
     void Awake()
     {
         levelManager = levelManagerObj.GetComponent<LevelManager>();
+        strikes = new int[levelManager.floors];
     }
 
     [Tooltip("The prefab used as a blank tile")]
     public GameObject emptyTile;
-
-    /// <summary>
-    /// The grid of tiles
-    /// </summary>
-    public GameObject[,] Grid { get; set; }
     
     [InspectorButton("CreateGrid")]
     public bool createGrid = false;
     /// <summary>
     /// creates a grid of blank tiles in a super-position 🦸‍♂️
     /// </summary>
-    void CreateGrid()
+    void CreateGrid(int floor)
     {
-        Grid = new GameObject[levelManager.levelX, levelManager.levelY];
 
         for (int y = 0; y < levelManager.levelY; y++)
         {
             for (int x = 0; x < levelManager.levelX; x++)
             {
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, workingFloor * 2.8f, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
-                Grid[x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
+                levelManager.Mansion[floor][x, y] = Instantiate(emptyTile, new Vector3(x * 2, floor * 2.8f, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                levelManager.Mansion[floor][x, y].name = string.Concat("(", x.ToString(), ", ", y.ToString(), ")");
             }
         }
 
@@ -53,7 +46,7 @@ public class LevelGenerator : MonoBehaviour
                     if (!((x == 0 && y == 0) || (x == levelManager.levelX - 1 && y == levelManager.levelY - 1) || (x == 0 && y == levelManager.levelY - 1) || (y == 0 && x == levelManager.levelX - 1)))
                     {
                         int rotation = x == 0 ? 2 : y == 0 ? 3 : y == levelManager.levelY - 1 ? 1 : 0;
-                        PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
+                        PossibilitySpace possibilitySpace = levelManager.Mansion[floor][x, y].GetComponent<PossibilitySpace>();
 
                         for (int i = possibilitySpace.Entropy.Count - 1; i > -1; i--)
                         {
@@ -61,7 +54,7 @@ public class LevelGenerator : MonoBehaviour
                             if (tilePrototype.rotation != rotation || tilePrototype.invariable) possibilitySpace.Entropy.RemoveAt(i);
                         }
 
-                        PropagateEntropy(x, y);
+                        PropagateEntropy(floor, x, y);
                     }
                 }
             }
@@ -73,11 +66,11 @@ public class LevelGenerator : MonoBehaviour
     /// <summary>
     /// Destroys an existing grid if any 🔥
     /// </summary>
-    void DestroyGrid()
+    void DestroyGrid(int floor)
     {
-        if (Grid != null)
+        if (levelManager.Mansion[floor] != null)
         {
-            foreach (GameObject tile in Grid)
+            foreach (GameObject tile in levelManager.Mansion[floor])
             {
                 if (tile != null) Destroy(tile);
             }
@@ -90,7 +83,7 @@ public class LevelGenerator : MonoBehaviour
     /// <param name="x">x position in the grid</param>
     /// <param name="y">y position in the grid</param>
     /// <param name="prefab">the prefab to convert to</param>
-    public void ConvertTile(int x, int y, GameObject prefab)
+    public void ConvertTile(int floor, int x, int y, GameObject prefab)
     {
         TilePrototype proto = prefab.GetComponent<TilePrototype>();
         if (proto == null)
@@ -98,13 +91,13 @@ public class LevelGenerator : MonoBehaviour
             Debug.Log("GEN: Attempted to covert tile to a non-tile gameObject :(");
         }
         if (x < -1 || x > levelManager.levelX - 1 || y < -1 || y > levelManager.levelY - 1) return;
-        if (Grid[x, y] != null)
+        if (levelManager.Mansion[floor][x, y] != null)
         {
-            Destroy(Grid[x, y]);
+            Destroy(levelManager.Mansion[floor][x, y]);
             Quaternion quaternion = new Quaternion();
             quaternion.eulerAngles = new Vector3(0, proto.rotation * 90, 0);
-            Grid[x, y] = Instantiate(prefab, new Vector3(x * 2, workingFloor * 2.8f, (levelManager.levelY - y) * 2), quaternion);
-            Grid[x, y].name = "(" + x.ToString() + ", " + y.ToString() + ")";
+            levelManager.Mansion[floor][x, y] = Instantiate(prefab, new Vector3(x * 2, floor * 2.8f, (levelManager.levelY - y) * 2), quaternion);
+            levelManager.Mansion[floor][x, y].name = "(" + x.ToString() + ", " + y.ToString() + ")";
         }
         else
         {
@@ -117,18 +110,18 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     /// <param name="x">the x position in the grid of the tile to propagate from</param>
     /// <param name="y">the y position in the grid of the tile to propagate from</param>
-    void PropagateEntropy(int x, int y)
+    void PropagateEntropy(int floor, int x, int y)
     {
         // check to make sure x and y are in range of the grid array
         if (x < 0 || x > levelManager.levelX || y < 0 || y > levelManager.levelY) return;
 
-        GameObject tile = Grid[x, y];
+        GameObject tile = levelManager.Mansion[floor][x, y];
         NeighborsList tilePrototype;
 
         List<Vector2Int> nextGeneration = new List<Vector2Int>();
 
         // If the tile that the changes are being propagated from is an undecided blank tile, create a new TilePrototype including all of the possibilities for that face from each tile in the entropy. This is because the PossibilitySpace component doesn't contain a Neighbors list, only an Entropy. 😵‍💫
-        if (Grid[x, y].CompareTag("Undecided"))
+        if (levelManager.Mansion[floor][x, y].CompareTag("Undecided"))
         {
             PossibilitySpace blankTile = tile.GetComponent<PossibilitySpace>();
             if (blankTile.Entropy.Count == blankTile.DefaultEntropy.Count || blankTile.previouslyPropagated)
@@ -191,30 +184,30 @@ public class LevelGenerator : MonoBehaviour
         if (x - 1 > -1)
         {
             Vector2Int target = new Vector2Int(x - 1, y);
-            if (PropagateEntropyOfFace(tilePrototype, target, Directions.Left)) nextGeneration.Add(target);
+            if (PropagateEntropyOfFace(floor, tilePrototype, target, Directions.Left)) nextGeneration.Add(target);
         }
         // Front Side
         if (y + 1 < levelManager.levelY)
         {
             Vector2Int target = new Vector2Int(x, y + 1);
-            if (PropagateEntropyOfFace(tilePrototype, target, Directions.Front)) nextGeneration.Add(target);
+            if (PropagateEntropyOfFace(floor, tilePrototype, target, Directions.Front)) nextGeneration.Add(target);
         }
         // Right Side
         if  (x + 1 < levelManager.levelX)
         {
             Vector2Int target = new Vector2Int(x + 1, y);
-            if (PropagateEntropyOfFace(tilePrototype, target, Directions.Right)) nextGeneration.Add(target);
+            if (PropagateEntropyOfFace(floor, tilePrototype, target, Directions.Right)) nextGeneration.Add(target);
         }
         // Back Side
         if  (y - 1 > -1)
         {
             Vector2Int target = new Vector2Int(x, y - 1);
-            if (PropagateEntropyOfFace(tilePrototype, target, Directions.Back)) nextGeneration.Add(target);
+            if (PropagateEntropyOfFace(floor, tilePrototype, target, Directions.Back)) nextGeneration.Add(target);
         }
 
         foreach (Vector2Int coord in nextGeneration)
         {
-            PropagateEntropy(coord.x, coord.y);
+            PropagateEntropy(floor, coord.x, coord.y);
         }
 
         if (tile.CompareTag("Undecided"))
@@ -225,21 +218,21 @@ public class LevelGenerator : MonoBehaviour
     }
 
     private enum Directions { Left, Front, Right, Back }
-    bool PropagateEntropyOfFace(NeighborsList neighborsList, Vector2Int target, Directions direction)
+    bool PropagateEntropyOfFace(int floor, NeighborsList neighborsList, Vector2Int target, Directions direction)
     {
-        // only propogate the changes in entopy to an undecided blank prefab, not a decided tile 🚫
-        if (Grid[target.x, target.y].CompareTag("Undecided"))
+        // only propagate the changes in entropy to an undecided blank prefab, not a decided tile 🚫
+        if (levelManager.Mansion[floor][target.x, target.y].CompareTag("Undecided"))
         {
             bool wasChange = false;
             // the tile on the left side
-            PossibilitySpace blankTile = Grid[target.x, target.y].GetComponent<PossibilitySpace>();
+            PossibilitySpace blankTile = levelManager.Mansion[floor][target.x, target.y].GetComponent<PossibilitySpace>();
             List<GameObject> neighbors =
                 direction == Directions.Left ? neighborsList.Left.neighbors :
                 direction == Directions.Front ? neighborsList.Front.neighbors :
                 direction == Directions.Right ? neighborsList.Right.neighbors :
                 direction == Directions.Back ? neighborsList.Back.neighbors : null;
 
-            // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propogating
+            // Remove the possibility of the blank tile if it is not in the valid neighbor list of the tile currently propagating
             for (int i = blankTile.Entropy.Count - 1; i > -1; i--)
             {
                 if (!neighbors.Contains(blankTile.Entropy[i]))
@@ -249,17 +242,17 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
 
-            // If a change was made to the front side tile's entropy, propogate it to it's adjacent tiles.
+            // If a change was made to the front side tile's entropy, propagate it to it's adjacent tiles.
             return wasChange;
         }
         else return false;
     }
 
-    GameObject ChoosePrefabFromEntropy(int x, int y)
+    GameObject ChoosePrefabFromEntropy(int floor, int x, int y)
     {
-        if (x < 0 || x > levelManager.levelX || y < 0 || y > levelManager.levelY || !Grid[x, y].CompareTag("Undecided")) return null;
+        if (x < 0 || x > levelManager.levelX || y < 0 || y > levelManager.levelY || !levelManager.Mansion[floor][x, y].CompareTag("Undecided")) return null;
 
-        List<GameObject> entropy = Grid[x, y].GetComponent<PossibilitySpace>().Entropy;
+        List<GameObject> entropy = levelManager.Mansion[floor][x, y].GetComponent<PossibilitySpace>().Entropy;
         List<TilePrototype> tiles = new List<TilePrototype>();
         foreach(GameObject option in entropy)
         {
@@ -285,7 +278,7 @@ public class LevelGenerator : MonoBehaviour
     /// <param name="lastX">the x coordinate in the grid of the tile to check around</param>
     /// <param name="lastY">the y coordinate in the grid of the tile to check around</param>
     /// <returns>the x/y coordinate of the next tile in a vector</returns>
-    Vector2Int GetNextTileCoords(int lastX, int lastY)
+    Vector2Int GetNextTileCoords(int floor, int lastX, int lastY)
     {
         List<PossibilitySpace> options = new List<PossibilitySpace>();
         List<Vector2Int> optionCoordinates = new List<Vector2Int>();
@@ -298,11 +291,11 @@ public class LevelGenerator : MonoBehaviour
 
             if (lastX + xOffset > -1 && lastX + xOffset < levelManager.levelX && lastY + yOffset > -1 && lastY + yOffset < levelManager.levelY)
             {
-                if (Grid[lastX + xOffset, lastY + yOffset] != null)
+                if (levelManager.Mansion[floor][lastX + xOffset, lastY + yOffset] != null)
                 {
-                    if (Grid[lastX + xOffset, lastY + yOffset].CompareTag("Undecided"))
+                    if (levelManager.Mansion[floor][lastX + xOffset, lastY + yOffset].CompareTag("Undecided"))
                     {
-                        PossibilitySpace option = Grid[lastX + xOffset, lastY + yOffset].GetComponent<PossibilitySpace>();
+                        PossibilitySpace option = levelManager.Mansion[floor][lastX + xOffset, lastY + yOffset].GetComponent<PossibilitySpace>();
                         if (option.Entropy.Count > 0)
                         {
                             options.Add(option);
@@ -322,9 +315,9 @@ public class LevelGenerator : MonoBehaviour
             {
                 for (int x = 0; x < levelManager.levelX; x++)
                 {
-                    if (Grid[x, y].CompareTag("Undecided"))
+                    if (levelManager.Mansion[floor][x, y].CompareTag("Undecided"))
                     {
-                        PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
+                        PossibilitySpace possibilitySpace = levelManager.Mansion[floor][x, y].GetComponent<PossibilitySpace>();
                         if (possibilitySpace.Entropy.Count < lowestEntropy)
                         {
                             foundTile = true;
@@ -381,16 +374,16 @@ public class LevelGenerator : MonoBehaviour
     /// <summary>
     /// Prepares the level for generation, and takes the first step 👶
     /// </summary>
-    void StartGeneration()
+    void StartGeneration(int floor)
     {
-        // Reset Grid
-        if (Grid == null) CreateGrid();
-        foreach (GameObject tile in Grid)
+        // Reset levelManager.Mansion[floor]
+        if (levelManager.Mansion[floor] == null) CreateGrid(floor);
+        foreach (GameObject tile in levelManager.Mansion[floor])
         {
             if (!tile.CompareTag("Undecided"))
             {
-                DestroyGrid();
-                CreateGrid();
+                DestroyGrid(floor);
+                CreateGrid(floor);
             }
         }
 
@@ -398,60 +391,107 @@ public class LevelGenerator : MonoBehaviour
         int randX = Random.Range(0, levelManager.levelX);
         int randY = Random.Range(0, levelManager.levelY);
 
-        PossibilitySpace randomTile = Grid[randX, randY].GetComponent<PossibilitySpace>();
-        ConvertTile(randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
-        PropagateEntropy(randX, randY);
+        PossibilitySpace randomTile = levelManager.Mansion[floor][randX, randY].GetComponent<PossibilitySpace>();
+        ConvertTile(floor, randX, randY, randomTile.Entropy[Random.Range(0, randomTile.Entropy.Count)]);
+        PropagateEntropy(floor, randX, randY);
         LastTile = new Vector2Int(randX, randY);
     }
 
-    private int strikes = 0;
+    void StartGenerationWithSeed(int floor, Room seed)
+    {
+        List<Vector2Int> seedCoords = Enumerable.Concat(seed.tileCoords, seed.sharedTileCoords).ToList();
+		List<TilePrototype> seedTiles = Enumerable.Concat(seed.tiles, seed.sharedTiles).ToList();
+
+        // Reset levelManager.Mansion[floor]
+        if (levelManager.Mansion[floor] == null) CreateGrid(floor);
+        foreach (GameObject tile in levelManager.Mansion[floor])
+        {
+            if (!tile.CompareTag("Undecided"))
+            {
+                DestroyGrid(floor);
+                CreateGrid(floor);
+            }
+        }
+
+        if (seedCoords.Count != seedTiles.Count)
+        {
+            Debug.Log("GEN: failed to start generation with seed");
+            return;
+        }
+
+        List<Vector2Int> seededPossibilitySpaces = new();
+        foreach (Vector2Int coord in seedCoords)
+        {
+            if (coord.x > -1 && coord.x < levelManager.levelX && coord.y > -1 && coord.y < levelManager.levelY)
+            {
+                if (levelManager.Mansion[floor][coord.x, coord.y].CompareTag("Undecided"))
+                {
+                    PossibilitySpace possibilitySpace = levelManager.Mansion[floor][coord.x, coord.y].GetComponent<PossibilitySpace>();
+                    possibilitySpace.Entropy.RemoveAll(x => x != seedTiles[seedCoords.IndexOf(coord)].neighborsList.Self);
+                    seededPossibilitySpaces.Add(coord);
+                }
+				else 
+				{
+					Debug.Log("GEN: failed to start generation with seed");
+            		return;
+				}
+            }
+        }
+        foreach (Vector2Int coord in seededPossibilitySpaces)
+        {
+            PropagateEntropy(floor, coord.x, coord.y);
+        }
+        LastTile = seededPossibilitySpaces[seededPossibilitySpaces.Count - 1];
+    }
+
+    private int[] strikes;
 
     [InspectorButton("Step")]
     public bool step = false;
     /// <summary>
     /// One 'step' in the algorithm
     /// </summary>
-    void Step()
+    void Step(int floor)
     {
-        Vector2Int nextTileCoords = GetNextTileCoords(LastTile.x, LastTile.y);
+        Vector2Int nextTileCoords = GetNextTileCoords(floor, LastTile.x, LastTile.y);
 
-        if (!Grid[nextTileCoords.x, nextTileCoords.y].CompareTag("Undecided"))
+        if (!levelManager.Mansion[floor][nextTileCoords.x, nextTileCoords.y].CompareTag("Undecided"))
         {
             Debug.Log("GEN: Tile selected by the GetNextTileCoords was not undecided");
             return;
         }
 
-        GameObject prefab = ChoosePrefabFromEntropy(nextTileCoords.x, nextTileCoords.y);
+        GameObject prefab = ChoosePrefabFromEntropy(floor, nextTileCoords.x, nextTileCoords.y);
         if (prefab == null)
         {
             Debug.Log("GEN: Failed to retrieve tile from choices");
             return;
         }
-        ConvertTile(nextTileCoords.x, nextTileCoords.y, prefab);
-        PropagateEntropy(nextTileCoords.x, nextTileCoords.y);
+        ConvertTile(floor, nextTileCoords.x, nextTileCoords.y, prefab);
+        PropagateEntropy(floor, nextTileCoords.x, nextTileCoords.y);
         LastTile = new Vector2Int(nextTileCoords.x, nextTileCoords.y);
 
         for (int y = 0; y < levelManager.levelY; y++)
         {
             for (int x = 0; x < levelManager.levelX; x++)
             {
-                if (!Grid[x, y].CompareTag("Undecided")) continue;
-                PossibilitySpace possibilitySpace = Grid[x, y].GetComponent<PossibilitySpace>();
-                if (possibilitySpace.Entropy.Count == 1) ConvertTile(x, y, possibilitySpace.Entropy[0]);
+                if (!levelManager.Mansion[floor][x, y].CompareTag("Undecided")) continue;
+                PossibilitySpace possibilitySpace = levelManager.Mansion[floor][x, y].GetComponent<PossibilitySpace>();
+                if (possibilitySpace.Entropy.Count == 1) ConvertTile(floor, x, y, possibilitySpace.Entropy[0]);
                 else if (possibilitySpace.Entropy.Count == 0)
                 {
-                    if (strikes < maxStrikes)
+                    if (strikes[floor] < maxStrikes)
                     {
-                        strikes++;
-                        CreatePatch(levelManager.levelX * levelManager.levelY > 144 ? 2 : 1, new Vector2Int(x, y));
-                        Debug.Log("GEN: Generation Error Strike: " + strikes.ToString() + "/" + maxStrikes.ToString() + ", Generated Patch, Continuing...");
+                        strikes[floor]++;
+                        CreatePatch(floor, levelManager.levelX * levelManager.levelY > 144 ? 2 : 1 * strikes[floor], new Vector2Int(x, y));
+                        Debug.Log("GEN: Generation Error Strike: " + strikes[floor].ToString() + "/" + maxStrikes.ToString() + ", Generated Patch, Continuing...");
                     }
                     else
                     {
-                        strikes = 0;
-                        DestroyGrid();
-                        CreateGrid();
-                        StartGeneration();
+                        strikes[floor] = 0;
+                        DestroyGrid(floor);
+                        CreateGrid(floor);
+                        StartGeneration(floor);
                     }
                 }
             }
@@ -460,31 +500,36 @@ public class LevelGenerator : MonoBehaviour
 
     [InspectorButton("Generate")]
     public bool generate = false;
-    public void Generate(int floor)
+    public IEnumerator Generate(int floor, Room seed = null)
     {
-        workingFloor = floor;
-
-        CreateGrid();
-        StartGeneration();
+        if (strikes == null) strikes = new int[levelManager.floors];
+        strikes[floor] = 0;
+        
+        CreateGrid(floor);
+		
+		if (seed != null) StartGenerationWithSeed(floor, seed);
+        else StartGeneration(floor);
 
         bool complete = false;
         while (!complete)
         {
-            Step();
+            Step(floor);
             complete = true;
             for (int y = 0; y < levelManager.levelY; y++)
             {
                 for (int x = 0; x < levelManager.levelX; x++)
                 {
-                    if (Grid[x, y].CompareTag("Undecided"))
+                    if (levelManager.Mansion[floor][x, y].CompareTag("Undecided"))
                     {
                         complete = false;
                         break;
                     }
                 }
                 if (!complete) break;
+                yield return null;
             }
         }
+
         bool valid = true;
         if (complete)
         {
@@ -493,7 +538,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 for (int x = 0; x < levelManager.levelX; x++)
                 {
-                    validationGrid[x, y] = Grid[x, y].GetComponent<TilePrototype>().neighborsList;
+                    validationGrid[x, y] = levelManager.Mansion[floor][x, y].GetComponent<TilePrototype>().neighborsList;
                 }
             }
 
@@ -525,18 +570,19 @@ public class LevelGenerator : MonoBehaviour
         }
         if (valid)
         {
-            levelManager.Mansion.Add(Grid);
+            levelManager.Mansion.Add(levelManager.Mansion[floor]);
+            levelManager.GenerationComplete[floor] = true;
             Debug.Log("GEN: Generation Success! Took: " + Time.deltaTime.ToString() + " seconds.");
         }
         else
         {
-            DestroyGrid();
-            Generate(floor);
+            DestroyGrid(floor);
+            yield return StartCoroutine(Generate(floor));
         }
     }
 
 
-    void CreatePatch(int size, Vector2Int center)
+    void CreatePatch(int floor, int size, Vector2Int center)
     {
         if (center.x < 0 || center.x > levelManager.levelX - 1 || center.y < 0 || center.y > levelManager.levelY - 1) return;
         // replace tiles around center with blank tiles
@@ -544,9 +590,9 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int x = center.x - size; x < center.x + size + 1; x++)
             {
-                if (x < 0 || x > levelManager.levelX - 1 || y < 0 || y > levelManager.levelY - 1) continue;
-                Destroy(Grid[x, y]);
-                Grid[x, y] = Instantiate(emptyTile, new Vector3(x * 2, workingFloor * 2.8f, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
+                if (x < 1 || x > levelManager.levelX - 2 || y < 1 || y > levelManager.levelY - 2) continue;
+                Destroy(levelManager.Mansion[floor][x, y]);
+                levelManager.Mansion[floor][x, y] = Instantiate(emptyTile, new Vector3(x * 2, floor * 2.8f, (levelManager.levelY - y) * 2), new Quaternion(0, 0, 0, 0));
             }
         }
         // propagates edges of the patch into it.
@@ -557,7 +603,7 @@ public class LevelGenerator : MonoBehaviour
                 if (x < 0 || x > levelManager.levelX - 1 || y < 0 || y > levelManager.levelY - 1) continue;
                 if (!((x == 0 && y == 0) || (x == center.x + size + 1 && y == center.y + size + 1) || (x == 0 && y == center.y + size + 1) || (y == 0 && x == center.x + size + 1)))
                 {
-                    PropagateEntropy(x, y);
+                    PropagateEntropy(floor, x, y);
                 }
             }
         }

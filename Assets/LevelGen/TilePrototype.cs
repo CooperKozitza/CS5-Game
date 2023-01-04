@@ -17,17 +17,12 @@ public class TilePrototype : MonoBehaviour
 
 <<<<<<< HEAD
     private Material material;
-=======
-    public GameObject floor;
 
-    public void ChangeFloorMaterial(Material material)
+    void OnGizmosDraw()
     {
-        if (floor != null)
-        {
-            floor.GetComponent<MeshRenderer>().material = material;
-        }
+        Gizmos.color = new Color(rooms.FindAll(x => x.roomType == Room.Type.Hallway).Count > 0 ? 1 : 0, 0, 0, 0.5f);
+        Gizmos.DrawCube(transform.position, new Vector3(2, 0.5f, 2));
     }
->>>>>>> develop
 }
 
 

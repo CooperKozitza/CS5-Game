@@ -26,7 +26,11 @@ public class RoomManager : MonoBehaviour
 
     [InspectorButton("SetRooms")]
     public bool setRooms = false;
-    public void SetRooms(int floor)
+    /// <summary>
+    /// Builds rooms for the mansion from the given floor. The method determines the rooms' types and places doors.
+    /// </summary>
+    /// <param name="floor">The floor to set rooms on</param>
+    public IEnumerator SetRooms(int floor)
     {
         while (true)
         {
@@ -36,9 +40,9 @@ public class RoomManager : MonoBehaviour
             else
             {
                 foreach (TilePrototype tile in room.tiles) tile.rooms.Add(room);
-                foreach (TilePrototype tile in room.sharedTiles) tile.rooms.Add(room);
                 rooms.Add(room);
             }
+            yield return null;
         } 
 
         foreach (Room room in rooms)
@@ -87,6 +91,7 @@ public class RoomManager : MonoBehaviour
     Room FindRoomOnFloor(int floor)
     {
         Room room = new Room();
+        room.floor = floor;
         GameObject[,] grid = levelManager.Mansion[floor];
         TilePrototype[,] protoGrid = new TilePrototype[levelManager.levelX, levelManager.levelY];
         for (int y = 0; y < levelManager.levelY; y++)
@@ -293,6 +298,8 @@ public class RoomManager : MonoBehaviour
 
 public class Room
 {
+    public int floor;
+
     public List<TilePrototype> tiles = new();
     public List<TilePrototype> sharedTiles = new();
 
