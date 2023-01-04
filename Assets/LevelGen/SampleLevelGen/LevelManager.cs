@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     private RoomManager roomManager;
 
     public int levelX, levelY;
+
     [Range(0,5)]
     public int floors;
 

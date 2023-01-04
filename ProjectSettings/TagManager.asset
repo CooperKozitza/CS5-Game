@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Undecided
   - Hallway
+  - Pickup
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ignore NavMesh
   - Water
   - UI
   - 

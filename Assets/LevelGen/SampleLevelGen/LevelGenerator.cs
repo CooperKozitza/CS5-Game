@@ -357,7 +357,7 @@ public class LevelGenerator : MonoBehaviour
         }
         else if (options.Count < 1)
         {
-            Debug.Log("GEN: Failed to retrieve next tile for tile at: " + new Vector2Int(lastX, lastY).ToString());
+            Debug.Log("GEN: Failed to retrive next tile for tile at: " + new Vector2Int(lastX, lastY).ToString());
             return new Vector2Int(lastX - 1, lastY);
         }
         else
