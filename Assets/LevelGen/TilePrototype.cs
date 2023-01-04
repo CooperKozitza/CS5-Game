@@ -15,7 +15,6 @@ public class TilePrototype : MonoBehaviour
     public List<Room> rooms = new();
     public NeighborsList neighborsList;
 
-<<<<<<< HEAD
     private Material material;
 
     void OnGizmosDraw()
